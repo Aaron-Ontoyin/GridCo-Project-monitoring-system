@@ -1,0 +1,94 @@
+a{
+    text-decoration:none;
+    color: black;
+}
+
+#Projects---available{
+    margin-top: 1em;
+    display: block;
+    height: fit-content;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 5px 10px 10px rgb(0,0,0, 0.15);
+}
+
+#title {
+    padding: 0 10px 0 10px;
+    font-weight: bolder;
+    display: inline-block;
+    color: rgb(80, 77, 77);
+    background-color: #fff ;
+    box-shadow: 5px 10px 10px rgb(0,0,0, 0.15);
+    border-radius: 10px;
+}
+
+#list--of--projects{
+    background-color: rgb(245, 220, 175);
+    font-size: 1.3em;
+    padding:20px 80px 80px 80px;
+    margin-top: 10px;
+    height: fit-content;
+}
+
+#search_and_add{
+    margin: 20px;
+    padding: 10px;
+}
+
+#inputSearchBox{
+    margin-top: 16px;
+    height: 2.3em;
+    width: 30em;
+    border-radius: 10px;
+    outline:none;
+    padding-left: 20px;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+#magni{
+    height: 1.7em;
+}
+
+.Card{
+    background-color: white;
+    box-shadow: 5px 10px 10px rgb(0,0,0, 0.15);
+    height: 7em;
+    margin-top: 60px;
+    border-radius: 10px;
+
+}
+
+.Sub--div,.Sub--divNext{
+    display: grid;
+    grid-template-columns: 1fr 0.19fr;
+    background-color: white;
+    padding:10px 10px 0 10px;
+}
+
+#created--By,#created--date{
+    color:rgb(109, 106, 106);
+}
+
+#created--date{
+    font-size: 0.8em;
+}
+
+#percent{
+    font-size: 0.8em;
+    color: blue;
+}
+
+#PDO {
+    height: 100px;
+    background-color: white;
+    font-size: medium;
+    padding: 10px;
+}
+
+#PDO--text{
+    font-size: large;
+}
+#project_title{
+    font-weight: bolder;
+}

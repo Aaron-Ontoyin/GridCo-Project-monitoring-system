@@ -1,0 +1,21 @@
+<h1>Index page</h1>
+
+<a href="">Index</a>
+<a href="">Profile</a>
+<a href="">Signin</a>
+
+<div>
+    {% for p in projects %}
+    <a href="{% url 'project' p.pk %}" style="text-decoration: none; color: black;">
+        <div style="border: 5px solid blue; margin: 5px; padding: 5px">
+            <p>Name: {{p.name}}</p>
+            <p>Duration: {{p.duration}}</p>
+            <p>Percent Completed: {{p.perc_completed}}</p>
+            <p>PDO: {{p.GenPDO}}</p>
+            <p>Created by: {{p.creator}}</p>
+        </div>
+    </a>
+    {% empty %}
+        <p>No projects yet</p>
+    {% endfor %}
+</div>

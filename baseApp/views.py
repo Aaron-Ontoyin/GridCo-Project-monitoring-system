@@ -23,8 +23,8 @@ class LoginView(View):
     success_url = reverse_lazy('index')
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect(self.success_url)
+        # if request.user.is_authenticated:
+        #     return redirect(self.success_url)
 
         form = self.form_class()
         context = {'form': form}
