@@ -1,0 +1,6 @@
+<h1>Login Page</h1>
+<a href="{% url 'index' %}">Index</a>
+<form action="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+</form>
