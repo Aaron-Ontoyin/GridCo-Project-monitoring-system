@@ -1,0 +1,132 @@
+body{
+    box-sizing: border-box;
+    margin: 0 0 0 0;
+}
+
+label{
+    font-weight: bold;
+}
+
+footer{
+background-color: aquamarine;
+
+}
+
+#division-for-form{
+   background-color: aquamarine; 
+}
+
+
+#Main---Nav_bar{
+    display: flex;
+    justify-content: space-between;
+    height: 4em;    
+}
+
+
+#project_name{
+    align-self: center;
+    font-weight: bolder;
+    font-size: larger;
+    font-family: Arial;
+    color: brown;
+}
+
+#profile_and_user_logout{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* end of Nav bar */
+
+/* division in main */
+
+#division-for-form{
+    margin-top: 10em;
+    margin-left: 17em;
+    margin-right: 17em;
+    box-shadow: 5px 5px 10px rgb(38, 38, 243, 0.5);
+}
+
+.textArea{
+
+    height: 2em;
+    width: 30em;
+    outline: none;
+    margin-top: 10px;
+    margin-left: 15em;
+    font-size: medium;
+    padding-left: 10px;
+}
+
+.label{
+    margin-left: 15em;
+}
+
+/* login text */
+#Login{
+    font-size: 2em;
+    font-style: italic;
+    font-weight: bolder;
+    margin-left: 14em;
+
+}
+#login-div{background-color: aliceblue;}
+
+/* #pass-label{
+    margin-top: 10px;
+} */
+
+#submit---btn{
+    margin-top: 2em;
+    margin-left: 25em;
+    height: 3em;
+    width: 10em;
+    background-color: rgb(38, 38, 243);
+    color: white;
+    font-family: Helvetica;
+    font-size: medium;
+    outline-width: 10px;
+
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: box-shadow 1.5s cursor 0.5s;
+}
+
+#submit---btn:hover{
+    
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+#remember-me{
+    margin-left: 15em;
+}
+
+#forgot---password{
+    margin-left: 27em;
+    margin-top: 10px;
+}
+#forgot_pass{
+    color: blue;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+#Gridco---logo{
+    height: 4em;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+#profile-avarta{
+    height: 3em;
+    margin-left: 10px;
+    cursor: pointer;
+}
+#logout{
+    font-weight: bold;
+    margin-top: 1em;
+    cursor: pointer;
+}
+
