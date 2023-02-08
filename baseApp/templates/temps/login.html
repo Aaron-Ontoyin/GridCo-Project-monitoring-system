@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="index.css">
     <title>GRIDCO</title>
 </head>
 <body>
@@ -35,16 +34,27 @@
     <main>
         <!-- division for the login form -->
         <div id="Main--body---div">
-            <div id="Projects---available">
-                <div id="title"> <h3> 
-                            HERE ARE THE LIST OF AVAILABLE PROJECTS 
-                            </h3>
-                </div>
-                <div id="list--of--projects">
-                    <p>Hello everyoone</p>
-                </div>
+            <div id="division-for-form">
+                <div id="login-div"><span id="Login" style="font-family: Oswald;">Log In</span></div>
+                <form action="">
+                    <div class="label" id="user_name_div">
+                        <label for="user_name">Username</label> <br>
+                    </div>
+                    <input type="text" name="user_name" id="user_name" class="textArea"> <br>
+                    <div class="label">
+                        <label for="password" id="pass-label">Password</label><br>
+                    </div>
+                    <input type="password" name="password" id="password" class="textArea"> <br>
+                    <div id="remember-me">
+                        <input type="checkbox" name="remember_Me" id="remember_Me"> <span>Remember Me</span> 
+                    </div>
+                    <br>
+                    <input type="submit" value="Submit" id="submit---btn"> <br>
+                    <div id="forgot---password">
+                        <span id="forgot_pass">Forgot Password</span>
+                    </div>
+                </form>
             </div>
-            
         </div>
     </main>
 </body>

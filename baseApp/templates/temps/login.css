@@ -1,0 +1,151 @@
+body{
+    box-sizing: border-box;
+    margin: 0 0 0 0;
+    background-attachment: fixed;
+    background-image: url(elec2.jpg);
+    background-repeat: no-repeat;
+    background-size: 100em;
+    background-position-x: right;
+}
+
+label{
+    font-weight: bold;
+}
+
+
+#division-for-form{
+   background-color: #2a4362; 
+}
+
+
+#Main---Nav_bar{
+    display: flex;
+    justify-content: space-between;
+    height: 4em;   
+    background-color: white; 
+}
+
+
+#project_name{
+    align-self: center;
+    font-weight: bolder;
+    font-size: larger;
+    font-family: Arial;
+    color: brown;
+}
+
+#profile_and_user_logout{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* end of Nav bar */
+
+/* division in main */
+
+#division-for-form{
+    margin-top: 10em;
+    margin-left: 30em;
+    margin-right: 17em;
+    box-shadow: 2px 2px 2px 2px white;
+    width: 40em;
+    height: 30em;
+}
+
+.textArea{
+
+    height: 3em;
+    width: 29em;
+    outline: none;
+    margin: 10px 2.8em;
+    font-size: large;
+    padding-left: 1em;
+    border-radius: 20px;
+    border-style: none;
+}
+
+.label{
+    margin-left: 2.8em;
+    color: white;
+    /* font-size: 1em; */
+}
+#user_name_div{
+    margin-top: 20px;
+}
+
+/* login text */
+#Login{
+    font-size: 2em;
+    font-style: italic;
+    font-weight: bolder;
+    margin-left: 9em;
+
+}
+#login-div{background-color: aliceblue;}
+
+/* #pass-label{
+    margin-top: 10px;
+} */
+
+#submit---btn{
+    margin-top: 2em;
+    margin-left: 15em;
+    height: 3em;
+    width: 10em;
+    background-color: rgb(38, 38, 243);
+    color: white;
+    font-family: Helvetica;
+    font-size: medium;
+    outline-width: 10px;
+
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: box-shadow 1.5s cursor 0.5s;
+}
+
+#submit---btn:hover{
+    
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+#remember-me{
+    margin-left: 2.8em;
+    border-color: blue;
+    color: white;
+
+}
+
+#forgot---password{
+    margin-left: 16.5em;
+    margin-top: 10px;
+}
+#forgot_pass{
+    color: white;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: color 0.5s;
+}
+ 
+#forgot_pass:hover{
+    color: blue;
+}
+
+#Gridco---logo{
+    height: 3.4em;
+    margin-left: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+#profile-avarta{
+    height: 3em;
+    margin-left: 10px;
+    cursor: pointer;
+}
+#logout{
+    font-weight: bold;
+    margin-top: 1em;
+    cursor: pointer;
+}
+
