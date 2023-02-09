@@ -4,25 +4,31 @@
     <style>
       table {
         font-family: arial, sans-serif;
-        border-collapse: collapse;        
-        width: fit-content;
+        border-collapse: collapse;
+        width: max-content;
+        overflow: scroll;
       }
 
-      td, th {
-        border: 1px solid #dddddd;        
+      td, th {       
+        border-bottom: 1px solid #dddddd;        
         text-align: left;
         padding: 8px;
       }
 
+      .nested-td {
+        border: none;
+      }
+
       th {
-        background-color: #dddddd;
+        background-color: #0a0909;
+        color: azure;
       }
 
       .group-label {
         text-align: center;
-        background-color: #dddddd;
+        background-color: #e7e4e4;
         font-weight: bold;
-        padding: 8px 0;
+        padding: 3px 0;
       }
     </style>
   </head>
@@ -38,21 +44,27 @@
         <th>Collection Frequency</th>
         <th>Baseline</th>
         <th>
-          Project Year 1
+          Project Year 1 (Jan 2020 - Jan 2021)
           <table>
             <tr>
               <th>L1</th>
               <th>L2</th>
               <th>L3</th>
+              <th>L3</th>
+              <th>L3</th>
+              <th>L3</th>
+              <th>L3</th>
             </tr>
           </table>
         </th>
+
         <th>
           Project Year 2
           <table>
             <tr>
               <th>L1</th>
-              <th>L2</th>              
+              <th>L2</th>
+              <th>L3</th>              
             </tr>
           </table>
         </th>
@@ -61,7 +73,8 @@
           <table>
             <tr>
               <th>F1</th>
-              <th>F2</th>              
+              <th>F2</th>
+              <th>F3</th>
             </tr>
           </table>
         </th>
@@ -73,69 +86,207 @@
         <td colspan="12" class="group-label">Group 1</td>
       </tr>
       <tr>
-        <td><input type="text" value="KPI 1"></td>
-        <td><input type="text" value="Result Indicator 1"></td>
-        <td><input type="text" value="Indicator 1"></td>
-        <td><input type="text" value="Classification 1"></td>
-        <td><input type="text" value="Unit 1"></td>
-        <td><input type="text" value="Frequency 1"></td>
-        <td><input type="text" value="Baseline 1"></td>
-        <td><input type="text" value="Year 1 L1"></td>
-        <td><input type="text" value="Year 2 L2"></td>
-        <td><input type="text" value="F1 Value"></td>
-        <td><input type="text" value="F2 Value"></td>        
-        <td><input type="text" value="Data Source 1"></td>
-        <td><textarea>Comment 1</textarea></td>
+        <td>KPI 1></td>
+        <td>Result Indicator 1</td>
+        <td>Indicator 1</td>
+        <td>Classification 1</td>
+        <td>Unit 1</td>
+        <td>Frequency 1</td>
+        <td>Baseline 1</td>
+        
+        <!-- Project years -->
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <!-- End of project years -->
+        
+        <!-- Project progress -->
+        <td>
+          <table>
+            <td class="nested-td">F11</td>
+            <td class="nested-td">F22</td>
+            <td class="nested-td">F33</td>
+          </table>          
+        </td>          
+        <!-- End of project progress -->
+
+        <td>Data Source 1</td>
+        <td>Comment 1</td>
       </tr>
+
       <tr>
-        <td><input type="text" value="KPI 1"></td>
-        <td><input type="text" value="Result Indicator 1"></td>
-        <td><input type="text" value="Indicator 1"></td>
-        <td><input type="text" value="Classification 1"></td>
-        <td><input type="text" value="Unit 1"></td>
-        <td><input type="text" value="Frequency 1"></td>
-        <td><input type="text" value="Baseline 1"></td>
-        <td><input type="text" value="Year 1 L1"></td>
-        <td><input type="text" value="Year 2 L2"></td>
-        <td><input type="text" value="F1 Value"></td>
-        <td><input type="text" value="F2 Value"></td>        
-        <td><input type="text" value="Data Source 1"></td>
-        <td><textarea>Comment 1</textarea></td>
+        <td>KPI 1></td>
+        <td>Result Indicator 1</td>
+        <td>Indicator 1</td>
+        <td>Classification 1</td>
+        <td>Unit 1</td>
+        <td>Frequency 1</td>
+        <td>Baseline 1</td>
+        
+        <!-- Project years -->
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <!-- End of project years -->
+        
+        <!-- Project progress -->
+        <td>
+          <table>
+            <td class="nested-td">F11</td>
+            <td class="nested-td">F22</td>
+            <td class="nested-td">F33</td>
+          </table>          
+        </td>          
+        <!-- End of project progress -->
+
+        <td>Data Source 1</td>
+        <td>Comment 1</td>
       </tr>
+
       <!-- Group 2 -->
       <tr>
         <td colspan="12" class="group-label">Group 2</td>
       </tr>
       <tr>
-        <td><input type="text" value="KPI 1"></td>
-        <td><input type="text" value="Result Indicator 1"></td>
-        <td><input type="text" value="Indicator 1"></td>
-        <td><input type="text" value="Classification 1"></td>
-        <td><input type="text" value="Unit 1"></td>
-        <td><input type="text" value="Frequency 1"></td>
-        <td><input type="text" value="Baseline 1"></td>
-        <td><input type="text" value="Year 1 L1"></td>
-        <td><input type="text" value="Year 2 L2"></td>
-        <td><input type="text" value="F1 Value"></td>
-        <td><input type="text" value="F2 Value"></td>        
-        <td><input type="text" value="Data Source 1"></td>
-        <td><textarea>Comment 1</textarea></td>
+        <td>KPI 1></td>
+        <td>Result Indicator 1</td>
+        <td>Indicator 1</td>
+        <td>Classification 1</td>
+        <td>Unit 1</td>
+        <td>Frequency 1</td>
+        <td>Baseline 1</td>
+        
+        <!-- Project years -->
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <!-- End of project years -->
+        
+        <!-- Project progress -->
+        <td>
+          <table>
+            <td class="nested-td">F11</td>
+            <td class="nested-td">F22</td>
+            <td class="nested-td">F33</td>
+          </table>          
+        </td>          
+        <!-- End of project progress -->
+
+        <td>Data Source 1</td>
+        <td>Comment 1</td>
       </tr>
       <tr>
-        <td><input type="text" value="KPI 1"></td>
-        <td><input type="text" value="Result Indicator 1"></td>
-        <td><input type="text" value="Indicator 1"></td>
-        <td><input type="text" value="Classification 1"></td>
-        <td><input type="text" value="Unit 1"></td>
-        <td><input type="text" value="Frequency 1"></td>
-        <td><input type="text" value="Baseline 1"></td>
-        <td><input type="text" value="Year 1 L1"></td>
-        <td><input type="text" value="Year 2 L2"></td>
-        <td><input type="text" value="F1 Value"></td>
-        <td><input type="text" value="F2 Value"></td>        
-        <td><input type="text" value="Data Source 1"></td>
-        <td><textarea>Comment 1</textarea></td>
+        <td>KPI 1></td>
+        <td>Result Indicator 1</td>
+        <td>Indicator 1</td>
+        <td>Classification 1</td>
+        <td>Unit 1</td>
+        <td>Frequency 1</td>
+        <td>Baseline 1</td>
+        
+        <!-- Project years -->
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <!-- End of project years -->
+        
+        <!-- Project progress -->
+        <td>
+          <table>
+            <td class="nested-td">F11</td>
+            <td class="nested-td">F22</td>
+            <td class="nested-td">F33</td>
+          </table>          
+        </td>          
+        <!-- End of project progress -->
+
+        <td>Data Source 1</td>
+        <td>Comment 1</td>
       </tr>
+      <tr>
+        <td>KPI 1></td>
+        <td>Result Indicator 1</td>
+        <td>Indicator 1</td>
+        <td>Classification 1</td>
+        <td>Unit 1</td>
+        <td>Frequency 1</td>
+        <td>Baseline 1</td>
+        
+        <!-- Project years -->
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <td>
+          <table>
+            <td class="nested-td">L11</td>
+            <td class="nested-td">L22</td>
+            <td class="nested-td">L33</td>
+          </table>
+        </td>
+        <!-- End of project years -->
+        
+        <!-- Project progress -->
+        <td>
+          <table>
+            <td class="nested-td">F11</td>
+            <td class="nested-td">F22</td>
+            <td class="nested-td">F33</td>
+          </table>          
+        </td>          
+        <!-- End of project progress -->
+
+        <td>Data Source 1</td>
+        <td>Comment 1</td>
+      </tr>
+
     </table>
   </body>
 </html>
