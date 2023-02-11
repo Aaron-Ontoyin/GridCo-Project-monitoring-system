@@ -1,63 +1,37 @@
+{% extends 'main.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <title>GRIDCO</title>
-</head>
-<body>
-    <nav id="Main---Nav_bar">
-        <!-- this is going to have three divisions  -->
-        <!--division for the logo -->
-        <div id="company-Logo">
+{% block content %}
+<div id="Main--body---div">
+    <div id="division-for-form">
+        <div id="login-div"><span id="Login" style="font-family: Oswald;">Log In</span></div>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="label" id="user_name_div">
+                <label for="username">Username</label> <br>                
+                {{ form.username }}
+            </div>
+            <div class="label">
+                <label for="password" id="pass-label">Password</label><br>
+                {{ form.password }}
+            </div>
+            <div id="remember-me">
+                <input type="checkbox" name="remember_Me" id="remember_Me"> <span>Remember Me</span> 
+            </div>
+            
+            {% if messages %}
+            {% for message in messages %}
             <div>
-                <a href="{% url 'index' %}">
-                        <img src="{% static 'images/GRIDco.png' %}" alt="GRIDCo" id="Gridco---logo">
-                    </a>
+                <p>{{message}}</p>
             </div>
-        </div>
-
-        <!-- division for the Project  -->
-        <div id="project_name">GRIDCo PROJECT MONITORING SYSTEM</div>
-
-        <!-- division for the profile avarta and user logout -->
-        <div id="profile_and_user_logout">
-            <div id="logout"><div id="logout---text"> LogOut </div></div>
-            <div>
-                    <img src="{% static 'images/avarta.png'%}" alt="Profile_avarta" id="profile-avarta">
+            {% endfor %}
+            {% endif %}
+            
+            <input type="submit" value="Submit" id="submit---btn"> <br>
+            <div id="forgot---password">
+                <span id="forgot_pass">Forgot Password</span>
             </div>
-        </div>
-    </nav>
-    <main>
-        <!-- division for the login form -->
-        <div id="Main--body---div">
-            <div id="division-for-form">
-                <div id="login-div"><span id="Login" style="font-family: Oswald;">Log In</span></div>
-                <form action="">
-                    <div class="label" id="user_name_div">
-                        <label for="user_name">Username</label> <br>
-                    </div>
-                    <input type="text" name="user_name" id="user_name" class="textArea"> <br>
-                    <div class="label">
-                        <label for="password" id="pass-label">Password</label><br>
-                    </div>
-                    <input type="password" name="password" id="password" class="textArea"> <br>
-                    <div id="remember-me">
-                        <input type="checkbox" name="remember_Me" id="remember_Me"> <span>Remember Me</span> 
-                    </div>
-                    <br>
-                    <input type="submit" value="Submit" id="submit---btn"> <br>
-                    <div id="forgot---password">
-                        <span id="forgot_pass">Forgot Password</span>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </main>
-</body>
-</html>
+        </form>
+    </div>
+</div>
+{% endblock content%}

@@ -73,7 +73,7 @@ class Project(models.Model):
     reporters = models.ManyToManyField(CustomUser, related_name='editing_projects', blank=True)
 
     def perc_completed(self):
-        pass
+        return 15
 
     def total_year_fills(self):
         return (self.collection_freq.value + 3) * self.duration

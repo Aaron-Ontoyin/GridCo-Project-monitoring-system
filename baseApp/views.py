@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views import View
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
@@ -23,15 +23,16 @@ class LoginView(View):
     success_url = reverse_lazy('index')
 
     def get(self, request, *args, **kwargs):
-        # if request.user.is_authenticated:
-        #     return redirect(self.success_url)
+        if request.user.is_authenticated:
+            return redirect(self.success_url)
 
         form = self.form_class()
         context = {'form': form}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = self.form_class(request, request.POST)
+        return redirect(self.success_url)
         
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -40,12 +41,17 @@ class LoginView(View):
             
             if user is not None:
                 login(request, user)
-                messages.info(request, f"Welcome {request.user.usename}")
+                messages.info(request, f"Welcome {request.user.username}")
                 return redirect(self.success_url)
             else:
-                messages.error(request, "Incorrect Username or password")
+                messages.error(request, "Incorrect Username or password")        
             
         return render(request, self.template_name, {'form': form})
+
+
+def logoutView(request):
+    logout(request)
+    return redirect('login')
 
 
 class ProjectView(DetailView):

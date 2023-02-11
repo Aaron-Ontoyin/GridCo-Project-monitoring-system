@@ -1,104 +1,53 @@
+{% extends 'main.html' %}
 {% load static %}
+{% block content %}
+<div>
+    <div class="input-group">
+        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+            aria-describedby="search-addon" />
+        <button type="button" class="btn btn-outline-primary">search</button>
+    </div>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <link rel="stylesheet" href="{% static 'css/index.css' %}">
-    <title>GRIDCO</title>
-</head>
-<body>
-    <nav id="Main---Nav_bar">
-        <!-- this is going to have three divisions  -->
-        <!--division for the logo -->
-        <div id="company-Logo">
-            <div>
-                <a href=".">
-                        <img src="{% static 'images/Gridco.png' %}" alt="GRIDCo" id="Gridco---logo">
-                    </a>
-            </div>
-        </div>
+    <div class="title-projects shadow rounded mt-4 p-3">
+        <h2>PROJECTS</h2>
+    </div>
 
-        <!-- division for the Project  -->
-        <div id="project_name">GRIDCo PROJECT MONITORING SYSTEM</div>
-        
-        <!-- division for the profile avarta and user logout -->
-        <div id="profile_and_user_logout">
-            <div id="logout"><div id="logout---text"> LogOut </div></div>
-            <div>
-                <img src="{% static 'images/avarta.png' %}" alt="Profile_avarta" id="profile-avarta">
-            </div>
-        </div>
-    </nav>
-    <main>
-        <!-- division for the login form -->
-        <div id="Main--body---div">
-            <div id="search_and_add">
-                <div>
-                    <input type="search" name="searchBox" id="inputSearchBox" placeholder="Search for Projects"> 
-                    <img src="{% static 'images/magnifyer.svg' %}" alt="search here" id="magni">
+    <div class="shadow mt-5 m-2 p-5">
+        {% for project in projects %}
+        <a href="">
+        <div class="project-card rounded p-2 my-4 ">
+            <div class="d-flex justify-content-between mb-2">
+                <div class="flex-row">
+                    <h3>Project Title: {{project.name}}</h3>
+                </div>
+                <div class="flex-row">
+                    <span> {{project.perc_completed}}% completed</span>
                 </div>
             </div>
-                <div id="Projects---available">
-                    <div id="title"> <h2> 
-                                HERE ARE THE LIST OF AVAILABLE PROJECTS 
-                                </h2>
-                    </div>
 
-                    <div id="list--of--projects">
-                        <a href="">
-                            <div class="Card">
-                                <div class="Sub--div">
-                                    <div id="project--title"><span id="project_title"> Project Title: </span></div>
-                                    <div id="Percentage--completed">
-                                        <span id="percent"> Percentage Completed: 100%
-                                                        </span>
-                                                    </div>
-                                                </div> <div id="PDO">
-                                        <span id="PDO--text">
-                                            PDO:
-                                        </span>
-                                    </div>
-                                
-                                    <div class="Sub--divNext">
-                                        <div id="created--By"> Created By:</div>
-                                        <div id="date--created">
-                                            <span id="created--date"> Created Date: 2023-06-12
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                            
-                            </div>
-                        </a>
-                        <a href="">
-                        <div class="Card">
-                            <div class="Sub--div">
-                                <div id="project--title"><span id="project_title"> Project Title: </span></div>
-                                <div id="Percentage--completed">
-                                    <span id="percent"> Percentage Completed: 100%
-                                                    </span>
-                                                </div>
-                                            </div> <div id="PDO">
-                                    <span id="PDO--text">
-                                         PDO:
-                                    </span>
-                                </div>
-                            
-                                <div class="Sub--divNext">
-                                    <div id="created--By"> Created By:</div>
-                                    <div id="date--created">
-                                        <span id="created--date"> Created Date: 2023-06-12
-                                                        </span>
-                                    </div>
-                                </div>
-                        </div>
-                        </a>
+            <div class="d-flex mb-4">
+                <div class="flex-row">
+                    <h6>PDO:</h6>
                 </div>
+                <div class="pdo shadow-sm rounded p-1 flex-row ml-3">
+                    <p>{{project.genPDO}}</p>
+                </div>                
+            </div>
+
+            <div class="project-card-footer d-flex justify-content-between mx-3">
+                <div class="flex-row">
+                    <span> Created By: {{project.creator}}</span>
+                </div>
+                <div class="flex-row">
+                    <span> Created Date: 2023-06-12</span>
+                </div>
+            </div>
+
         </div>
-    </main>
-</body>
-</html>
+        </a>
+        {% empty %}
+            <h2>No projects for you yet</h2>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

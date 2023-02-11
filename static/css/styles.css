@@ -1,0 +1,26 @@
+.title-projects {
+    width: fit-content;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.project-card {
+    border-radius: 40px;
+    border: 3px solid whitesmoke;
+    background-color: rgb(236, 241, 245);
+}
+
+.project-card:hover {
+    border: 5px solid whitesmoke;
+}
+
+.project-card-footer {
+    color: rgb(114, 112, 112);
+}
+
+.pdo {
+    width: 90%;
+}

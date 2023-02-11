@@ -59,36 +59,3 @@ a{
 
 }
 
-.Sub--div,.Sub--divNext{
-    display: grid;
-    grid-template-columns: 1fr 0.19fr;
-    background-color: white;
-    padding:10px 10px 0 10px;
-}
-
-#created--By,#created--date{
-    color:rgb(109, 106, 106);
-}
-
-#created--date{
-    font-size: 0.8em;
-}
-
-#percent{
-    font-size: 0.8em;
-    color: blue;
-}
-
-#PDO {
-    height: 100px;
-    background-color: white;
-    font-size: medium;
-    padding: 10px;
-}
-
-#PDO--text{
-    font-size: large;
-}
-#project_title{
-    font-weight: bolder;
-}

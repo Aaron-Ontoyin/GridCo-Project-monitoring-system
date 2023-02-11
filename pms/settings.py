@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-0l)jvsm3b8fl0j5mkob3mgb2csmk9k*)xylhbt%(g4e!wgcl__
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -57,7 +57,9 @@ ROOT_URLCONF = 'pms.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

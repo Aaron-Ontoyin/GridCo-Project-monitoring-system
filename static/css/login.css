@@ -1,5 +1,5 @@
 body{
-    background-image: url('/static/images/elec2.jpg');
+    /* background-image: url('/static/images/elec2.jpg'); */
     box-sizing: border-box;
     margin: 0 0 0 0;
     background-attachment: fixed;
@@ -54,17 +54,15 @@ label{
     height: 30em;
 }
 
-.textArea{
-
+/* .textArea{
     height: 3em;
     width: 29em;
     outline: none;
-    margin: 10px 2.8em;
-    font-size: large;
-    padding-left: 1em;
+    margin: 10px 0px;
+    font-size: large;    
     border-radius: 20px;
     border-style: none;
-}
+} */
 
 .label{
     margin-left: 2.8em;
@@ -142,7 +140,7 @@ label{
 
 #profile-avarta{
     height: 3em;
-    margin-left: 10px;
+    /* margin: 10px; */
     cursor: pointer;
 }
 #logout{
