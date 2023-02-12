@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <div>
-    <div class="input-group">
+    <div class="search-btn input-group">
         <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
             aria-describedby="search-addon" />
         <button type="button" class="btn btn-outline-primary">search</button>
@@ -14,7 +14,7 @@
 
     <div class="shadow mt-5 m-2 p-5">
         {% for project in projects %}
-        <a href="">
+        <a href="{% url 'project' project.id %}">
         <div class="project-card rounded p-2 my-4 ">
             <div class="d-flex justify-content-between mb-2">
                 <div class="flex-row">
@@ -39,7 +39,7 @@
                     <span> Created By: {{project.creator}}</span>
                 </div>
                 <div class="flex-row">
-                    <span> Created Date: 2023-06-12</span>
+                    <span> Created Date: {{project.created}}</span>
                 </div>
             </div>
 

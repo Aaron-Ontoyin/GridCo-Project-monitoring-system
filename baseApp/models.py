@@ -9,6 +9,13 @@ INDICATOR_CHOICES = [('1',1), ('2',2)]
 CLASSIFICATION_CHOICES = [('1',1), ('2',2)]
 MEASUREMENT_UNIT_CHOICES = [('1',1), ('2',2)]
 MONTH_CHOICES = [(1,1), (2,2)]
+    
+
+class CustomUser(AbstractUser):
+    user_id = models.CharField(max_length=7)
+    is_admin = models.BooleanField(default=False)    
+    def __str__(self):
+        return self.username
 
 
 class CollectionFrequency(models.Model):
@@ -16,90 +23,77 @@ class CollectionFrequency(models.Model):
     prefix = models.CharField(max_length=50)
     value = models.IntegerField()
 
-
-class CustomUser(AbstractUser):
-    user_id = models.CharField(max_length=7)
-    is_admin = models.BooleanField(default=False)
-    created_projects = models.ForeignKey('Project', related_name='creator', 
-    null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
-        return self.username
+        return self.name
 
 
-class Collection(models.Model):
-    name = models.CharField(max_length=50)
-    start_month = models.CharField(max_length=25)
+class YearEntries(models.Model):
+    name = models.CharField(max_length=50)    
 
 
 class ProjectYear(models.Model):
-    year_id = models.IntegerField(unique=True)
-    start_date = models.DateField()
-    str_start_date = models.CharField(max_length=150, null=True, blank=True)
+    year_num = models.IntegerField()        
+    collection_freq = models.ForeignKey(CollectionFrequency, on_delete=models.CASCADE, default=None)
+
     actual_to_date = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     target = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    perc_complete = models.DecimalField(decimal_places=2, max_digits=10, default=0)
-    collections = models.ForeignKey(Collection, related_name='project_year',  on_delete=models.CASCADE)
-    created = models.TimeField(auto_now_add=True)
+    perc_complete = models.DecimalField(decimal_places=2, max_digits=10, default=0, null=True, blank=True)
+
+    year_entries = models.ManyToManyField(YearEntries, related_name='project_year', blank=True)
 
     def save(self, *args, **kwargs):
         if self.pk is None:
-            self.str_start_date = self.start_date.strftime('%b %Y')
+            super().save(*args, **kwargs)
 
-            # Create collections with respect to self.project.collection_freq
-            num_collections = self.project.collection_freq.value
-            name = self.project.collection_freq.prefix
-            sdate = self.start_date.strftime('%b %Y')
-            for _ in range(num_collections):                
-                edate = self.start_date.date + timedelta(days=12 * 60 / num_collections)
-                edate = edate.strftime('%b %Y')
-                self.collections.add(Collections.objects.create(
-                    name=f'{name} {num_collections}',                    
-                    span=f'{sdate} - {edate}',                    
-                    ))
-                
-            return super().save(*args, **kwargs)
+            # Create year_entries with respect to self.num_year_entries            
+            count = 1
+            for _ in range(self.collection_freq.value):
+                self.year_entries.add(
+                    YearEntries.objects.create(name=f'{self.collection_freq.prefix} {count}'
+                ))                
+                count += 1
+
+    def __str__(self):
+        return f"Project year {self.year_num} :{self.collection_freq.name}"
 
 
 class Project(models.Model):
+    creator = models.ForeignKey(CustomUser, related_name='creator', 
+    null=True, blank=True, on_delete=models.SET_NULL)
+    project_years = models.ManyToManyField(ProjectYear, related_name="projects", blank=True)
     name = models.CharField(max_length=250)
-    duration = models.IntegerField(default=1)
-    genPDO = models.TextField(null=True, blank=True)
-    pdos = models.ForeignKey('Pdo', related_name='project',
-    default=None, on_delete=models.CASCADE)
-    project_years = models.ForeignKey(ProjectYear, 
-    default=None, on_delete=models.CASCADE, null=True, blank=True)
-    collection_freq = models.ForeignKey(CollectionFrequency,
-    default=None, on_delete=models.CASCADE)    
+    duration = models.IntegerField()
+    genPDO = models.CharField(max_length=1000)
     reporters = models.ManyToManyField(CustomUser, related_name='editing_projects', blank=True)
+    created = models.DateField(auto_now_add=True)
+    collection_freq = models.ForeignKey(CollectionFrequency, on_delete=models.CASCADE)
 
     def perc_completed(self):
         return 15
 
-    def total_year_fills(self):
+    def all_years_fill(self):
         return (self.collection_freq.value + 3) * self.duration
-
-    def create_years(self):
-        for _ in range(self.duration):
-            py = ProjectYear.objects.create(
-                year_id = self.project_years.count() + 1,
-                start_date = self.start_date
-                )
-            self.project_years.add(py)
+    
 
     def save(self, *args, **kwargs):
-        create_years = True if not self.pk else False
-        super().save(*args, *kwargs)
-        # Create duration number of project years
-        if create_years:
-            self.create_years            
+        super().save(*args, **kwargs)
+
+        # # Create project years
+        # count = 1
+        # for _ in range(self.duration):
+        #     py = ProjectYear.objects.create(year_id=count)
+        #     self.project_years.add(py)
+        
+    def __str__(self):
+        return self.name
 
 class Pdo(models.Model):
     name = models.CharField(max_length=250)
-    pdo_id = models.IntegerField(unique=True)
-    subpdos = models.ForeignKey('SubPDO', related_name='pdo', on_delete=models.CASCADE)
+    pdo_id = models.IntegerField()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="pdos")
 
 
-class SubPDO(models.Model):    
+class SubPDO(models.Model):
     result_level = models.CharField(
         max_length=20,
         choices = RESULT_LEVEL_CHOICES,
@@ -120,23 +114,24 @@ class SubPDO(models.Model):
         choices = MEASUREMENT_UNIT_CHOICES,
         default = ""
     )
+    pdo = models.ForeignKey(Pdo, related_name='subpdos', on_delete=models.CASCADE)
     baseline = models.IntegerField(default=1)
-    baseline_year_field = models.DateField(auto_now_add=True)
+    baselineyear = models.DateField()
     year_fills = [] # values corresponds to fields in the project years
     actual_to_date = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     end_target = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     perc_complete = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    detailed_data_src = models.TextField(null=True, blank=True)
-    comments = models.TextField(null=True, blank=True)
+    detailed_data_src = models.CharField(max_length=1000, null=True, blank=True)
+    comments = models.CharField(max_length=1000, null=True, blank=True)
 
-    def subpdo_id():
-        val = None
-        if self.pdo:
-            iden = f'{self.pdo.pdo_id}.'
-            pos = self.pdo.subpdo.count() + 1
-            val = f'{iden}{pos}'
+    def subpdo_id(self):
+        iden = f'{self.pdo.pdo_id}.'
+        pos = self.pdo.subpdo.count() + 1
+        val = f'PDO {iden}{pos}'
         return val
-            
+
+    def __str__(self):
+        return self.subpdo_id()
 
     def baseline_year(self):
         return self.baseline_year_field.date.strftime('%Y')

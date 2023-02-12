@@ -17,6 +17,10 @@ a {
     border: 5px solid whitesmoke;
 }
 
+.search-btn {
+    width: 40%;
+}
+
 .project-card-footer {
     color: rgb(114, 112, 112);
 }
@@ -24,3 +28,48 @@ a {
 .pdo {
     width: 90%;
 }
+
+/* Start Project page */
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: max-content;
+    overflow: scroll;
+}
+
+td,
+th {
+    border-bottom: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    text-align: center;
+    padding-right: 5px;
+}
+
+.nested-th {
+    border-top: 1px solid #dddddd;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.nested-td {
+    border: none;
+}
+
+th {
+    background-color: #0a0909;
+    color: azure;
+}
+
+.group-label {
+    text-align: center;
+    background-color: #e7e4e4;
+    font-weight: bold;
+    padding: 3px 0;
+}
+
+.project-table {
+    width: 100%;
+    overflow: scroll;
+}
+/* End Project page */

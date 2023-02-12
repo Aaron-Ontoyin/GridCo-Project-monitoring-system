@@ -1,80 +1,52 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: max-content;
-        overflow: scroll;
-      }
+{% extends "main.html" %}
 
-      td, th {       
-        border-bottom: 1px solid #dddddd;        
-        text-align: left;
-        padding: 8px;
-      }
+{% block content %}
+<div class="shadow p-2 m-2">
+  <h1>{{project.name}}</h1>
+</div>
+<div class="p-4">
+  <h5>Performance Indicator Tracking Table (ITT)</h5>
+  <p>
+    <strong>Project Development Objective: </strong>
+    {{project.genPDO}}
+  </p>
+</div>
 
-      .nested-td {
-        border: none;
-      }
-
-      th {
-        background-color: #0a0909;
-        color: azure;
-      }
-
-      .group-label {
-        text-align: center;
-        background-color: #e7e4e4;
-        font-weight: bold;
-        padding: 3px 0;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Project: {{project.name}}</h1>
+<div class="my-3 project-table">
     <table>
       <tr>
         <th>Indicator Ref</th>
-        <th>Result Indicator</th>
+        <th>Result Level</th>
         <th>Indicator</th>
         <th>Classification</th>
         <th>Unit of Measurement</th>
         <th>Collection Frequency</th>
         <th>Baseline</th>
-        <th>
-          Project Year 1 (Jan 2020 - Jan 2021)
-          <table>
-            <tr>
-              <th>L1</th>
-              <th>L2</th>
-              <th>L3</th>
-              <th>L3</th>
-              <th>L3</th>
-              <th>L3</th>
-              <th>L3</th>
-            </tr>
-          </table>
-        </th>
 
+      
         <th>
-          Project Year 2
+          Project Year 1
           <table>
             <tr>
-              <th>L1</th>
-              <th>L2</th>
-              <th>L3</th>              
+              <th class="nested-th">L1</th>
+              <th class="nested-th">L2</th>
+              <th class="nested-th">L3</th>
+              <th class="nested-th">L3</th>
+              <th class="nested-th">Yr {{year.id}} Actual To Date</th>
+              <th class="nested-th">Yearly Target</th>
+              <th class="nested-th">% complete</th>
             </tr>
           </table>
         </th>
+    
+
         <th>
           Progress to Date
           <table>
             <tr>
-              <th>F1</th>
-              <th>F2</th>
-              <th>F3</th>
+              <th class="nested-th">Actual To Date</th>
+              <th class="nested-th">End of Project Target</th>
+              <th class="nested-th">% Complete to Date</th>
             </tr>
           </table>
         </th>
@@ -95,6 +67,7 @@
         <td>Baseline 1</td>
         
         <!-- Project years -->
+        {% for _ in range 5 %}
         <td>
           <table>
             <td class="nested-td">L11</td>
@@ -109,6 +82,7 @@
             <td class="nested-td">L33</td>
           </table>
         </td>
+        {% endfor %}
         <!-- End of project years -->
         
         <!-- Project progress -->
@@ -124,169 +98,7 @@
         <td>Data Source 1</td>
         <td>Comment 1</td>
       </tr>
-
-      <tr>
-        <td>KPI 1></td>
-        <td>Result Indicator 1</td>
-        <td>Indicator 1</td>
-        <td>Classification 1</td>
-        <td>Unit 1</td>
-        <td>Frequency 1</td>
-        <td>Baseline 1</td>
-        
-        <!-- Project years -->
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <!-- End of project years -->
-        
-        <!-- Project progress -->
-        <td>
-          <table>
-            <td class="nested-td">F11</td>
-            <td class="nested-td">F22</td>
-            <td class="nested-td">F33</td>
-          </table>          
-        </td>          
-        <!-- End of project progress -->
-
-        <td>Data Source 1</td>
-        <td>Comment 1</td>
-      </tr>
-
-      <!-- Group 2 -->
-      <tr>
-        <td colspan="12" class="group-label">Group 2</td>
-      </tr>
-      <tr>
-        <td>KPI 1></td>
-        <td>Result Indicator 1</td>
-        <td>Indicator 1</td>
-        <td>Classification 1</td>
-        <td>Unit 1</td>
-        <td>Frequency 1</td>
-        <td>Baseline 1</td>
-        
-        <!-- Project years -->
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <!-- End of project years -->
-        
-        <!-- Project progress -->
-        <td>
-          <table>
-            <td class="nested-td">F11</td>
-            <td class="nested-td">F22</td>
-            <td class="nested-td">F33</td>
-          </table>          
-        </td>          
-        <!-- End of project progress -->
-
-        <td>Data Source 1</td>
-        <td>Comment 1</td>
-      </tr>
-      <tr>
-        <td>KPI 1></td>
-        <td>Result Indicator 1</td>
-        <td>Indicator 1</td>
-        <td>Classification 1</td>
-        <td>Unit 1</td>
-        <td>Frequency 1</td>
-        <td>Baseline 1</td>
-        
-        <!-- Project years -->
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <!-- End of project years -->
-        
-        <!-- Project progress -->
-        <td>
-          <table>
-            <td class="nested-td">F11</td>
-            <td class="nested-td">F22</td>
-            <td class="nested-td">F33</td>
-          </table>          
-        </td>          
-        <!-- End of project progress -->
-
-        <td>Data Source 1</td>
-        <td>Comment 1</td>
-      </tr>
-      <tr>
-        <td>KPI 1></td>
-        <td>Result Indicator 1</td>
-        <td>Indicator 1</td>
-        <td>Classification 1</td>
-        <td>Unit 1</td>
-        <td>Frequency 1</td>
-        <td>Baseline 1</td>
-        
-        <!-- Project years -->
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <!-- End of project years -->
-        
-        <!-- Project progress -->
-        <td>
-          <table>
-            <td class="nested-td">F11</td>
-            <td class="nested-td">F22</td>
-            <td class="nested-td">F33</td>
-          </table>          
-        </td>          
-        <!-- End of project progress -->
-
-        <td>Data Source 1</td>
-        <td>Comment 1</td>
-      </tr>
-
     </table>
-  </body>
-</html>
+
+</div>
+{% endblock content %}

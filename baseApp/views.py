@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
@@ -11,7 +12,8 @@ from django.contrib import messages
 
 from .models import Project
 
-class IndexView(ListView):
+
+class IndexView(LoginRequiredMixin, ListView):
     model = Project
     context_object_name = 'projects'
     template_name = 'baseApp/index.html'
