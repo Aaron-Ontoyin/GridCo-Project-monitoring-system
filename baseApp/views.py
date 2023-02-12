@@ -60,3 +60,12 @@ class ProjectView(DetailView):
     model = Project
     context_object_name = 'project'
     template_name = 'baseApp/project.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data()
+        cf = self.get_object().collection_freq
+        context["project_yearly_entries"] = [
+            f"{cf.prefix} {count}" for count in range(1, cf.value+1)
+            ]
+        return context
+        

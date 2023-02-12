@@ -23,21 +23,22 @@
         <th>Collection Frequency</th>
         <th>Baseline</th>
 
-      
+        {% for year in project.project_years.all %}
         <th>
-          Project Year 1
+          Project Year {{year.year_num}}
           <table>
             <tr>
-              <th class="nested-th">L1</th>
-              <th class="nested-th">L2</th>
-              <th class="nested-th">L3</th>
-              <th class="nested-th">L3</th>
-              <th class="nested-th">Yr {{year.id}} Actual To Date</th>
+              {% for entry in project_yearly_entries %}
+              <th class="nested-th">{{entry}} </th>
+              {% endfor %}
+
+              <th class="nested-th">Year {{year.year_num}} Actual To Date</th>
               <th class="nested-th">Yearly Target</th>
               <th class="nested-th">% complete</th>
             </tr>
           </table>
         </th>
+        {% endfor %}
     
 
         <th>
@@ -53,6 +54,7 @@
         <th>Data Source</th>
         <th>Comments</th>
       </tr>
+
       <!-- Group 1 -->
       <tr>
         <td colspan="12" class="group-label">Group 1</td>
@@ -67,27 +69,20 @@
         <td>Baseline 1</td>
         
         <!-- Project years -->
-        {% for _ in range 5 %}
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
-        <td>
-          <table>
-            <td class="nested-td">L11</td>
-            <td class="nested-td">L22</td>
-            <td class="nested-td">L33</td>
-          </table>
-        </td>
+        {% for year in project.project_years.all %}
+          <td>
+            <table>
+              <td class="nested-td">L11</td>
+              <td class="nested-td">L22</td>
+              <td class="nested-td">L33</td>
+            </table>
+          </td>          
         {% endfor %}
         <!-- End of project years -->
         
         <!-- Project progress -->
         <td>
-          <table>
+          <table class="justify-content-between">
             <td class="nested-td">F11</td>
             <td class="nested-td">F22</td>
             <td class="nested-td">F33</td>
