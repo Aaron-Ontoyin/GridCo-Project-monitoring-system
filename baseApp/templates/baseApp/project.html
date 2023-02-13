@@ -1,99 +1,103 @@
 {% extends "main.html" %}
 
 {% block content %}
-<div class="shadow p-2 m-2">
-  <h1>{{project.name}}</h1>
-</div>
-<div class="p-4">
-  <h5>Performance Indicator Tracking Table (ITT)</h5>
-  <p>
-    <strong>Project Development Objective: </strong>
-    {{project.genPDO}}
-  </p>
-</div>
+<section class="vh-100">
 
-<div class="my-3 project-table">
-    <table>
-      <tr>
-        <th>Indicator Ref</th>
-        <th>Result Level</th>
-        <th>Indicator</th>
-        <th>Classification</th>
-        <th>Unit of Measurement</th>
-        <th>Collection Frequency</th>
-        <th>Baseline</th>
+  <div class="shadow-sm p-2 m-2">
+    <h1>{{project.name}}</h1>
+  </div>
 
-        {% for year in project.project_years.all %}
-        <th>
-          Project Year {{year.year_num}}
-          <table>
-            <tr>
-              {% for entry in project_yearly_entries %}
-              <th class="nested-th">{{entry}} </th>
-              {% endfor %}
+  <div class="p-4">
+    <h5>Performance Indicator Tracking Table (ITT)</h5>
+    <p>
+      <strong><u>Project Development Objective:</u></strong> <br>
+      <p style="padding-left: 40px;">{{project.genPDO}}</p>
+    </p>
+  </div>
 
-              <th class="nested-th">Year {{year.year_num}} Actual To Date</th>
-              <th class="nested-th">Yearly Target</th>
-              <th class="nested-th">% complete</th>
-            </tr>
-          </table>
-        </th>
-        {% endfor %}
-    
+  <div class="mt-4 project-table">
+      <table>
+        <tr>
+          <th>Indicator Ref</th>
+          <th>Result Level</th>
+          <th>Indicator</th>
+          <th>Classification</th>
+          <th>Unit of Measurement</th>
+          <th>Collection Frequency</th>
+          <th>Baseline</th>
 
-        <th>
-          Progress to Date
-          <table>
-            <tr>
-              <th class="nested-th">Actual To Date</th>
-              <th class="nested-th">End of Project Target</th>
-              <th class="nested-th">% Complete to Date</th>
-            </tr>
-          </table>
-        </th>
-        <th>Data Source</th>
-        <th>Comments</th>
-      </tr>
-
-      <!-- Group 1 -->
-      <tr>
-        <td colspan="12" class="group-label">Group 1</td>
-      </tr>
-      <tr>
-        <td>KPI 1></td>
-        <td>Result Indicator 1</td>
-        <td>Indicator 1</td>
-        <td>Classification 1</td>
-        <td>Unit 1</td>
-        <td>Frequency 1</td>
-        <td>Baseline 1</td>
-        
-        <!-- Project years -->
-        {% for year in project.project_years.all %}
-          <td>
+          {% for year in project.project_years.all %}
+          <th>
+            Project Year {{year.year_num}}
             <table>
-              <td class="nested-td">L11</td>
-              <td class="nested-td">L22</td>
-              <td class="nested-td">L33</td>
+              <tr>
+                {% for entry in project_yearly_entries %}
+                <th class="nested-th">{{entry}} </th>
+                {% endfor %}
+
+                <th class="nested-th">Year {{year.year_num}} Actual To Date</th>
+                <th class="nested-th">Yearly Target</th>
+                <th class="nested-th">% complete</th>
+              </tr>
             </table>
+          </th>
+          {% endfor %}
+      
+
+          <th>
+            Progress to Date
+            <table>
+              <tr>
+                <th class="nested-th">Actual To Date</th>
+                <th class="nested-th">End of Project Target</th>
+                <th class="nested-th">% Complete to Date</th>
+              </tr>
+            </table>
+          </th>
+          <th>Data Source</th>
+          <th>Comments</th>
+        </tr>
+
+        <!-- Group 1 -->
+        <tr>
+          <td colspan="12" class="group-label">Group 1</td>
+        </tr>
+        <tr>
+          <td>KPI 1></td>
+          <td>Result Indicator 1</td>
+          <td>Indicator 1</td>
+          <td>Classification 1</td>
+          <td>Unit 1</td>
+          <td>Frequency 1</td>
+          <td>Baseline 1</td>
+          
+          <!-- Project years -->
+          {% for year in project.project_years.all %}
+            <td>
+              <table>
+                <td class="nested-td">L11</td>
+                <td class="nested-td">L22</td>
+                <td class="nested-td">L33</td>
+              </table>
+            </td>          
+          {% endfor %}
+          <!-- End of project years -->
+          
+          <!-- Project progress -->
+          <td>
+            <table class="justify-content-between">
+              <td class="nested-td">F11</td>
+              <td class="nested-td">F22</td>
+              <td class="nested-td">F33</td>
+            </table>          
           </td>          
-        {% endfor %}
-        <!-- End of project years -->
-        
-        <!-- Project progress -->
-        <td>
-          <table class="justify-content-between">
-            <td class="nested-td">F11</td>
-            <td class="nested-td">F22</td>
-            <td class="nested-td">F33</td>
-          </table>          
-        </td>          
-        <!-- End of project progress -->
+          <!-- End of project progress -->
 
-        <td>Data Source 1</td>
-        <td>Comment 1</td>
-      </tr>
-    </table>
+          <td style="padding-right: 100px; padding-left: 100px;">Data Source 1</td>
+          <td style="padding-right: 200px; padding-left: 200px;">Comment 1</td>
+        </tr>
+      </table>
+  </div>
 
-</div>
+</section>
 {% endblock content %}

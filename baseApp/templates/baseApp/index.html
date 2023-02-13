@@ -1,31 +1,31 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
-<div>
+<section class="custom-bg-image vh-100" style="background-image: url({% static '/images/elec2.jpg' %});">
     <div class="search-btn input-group">
-        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+        <input type="search" class="form-control rounded mt-3" placeholder="Search Projects" aria-label="Search"
             aria-describedby="search-addon" />
-        <button type="button" class="btn btn-outline-primary">search</button>
+        <button type="button" class="btn btn-primary mt-3">search</button>
     </div>
 
     <div class="title-projects shadow rounded mt-4 p-3">
-        <h2>PROJECTS</h2>
+        <h2 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">PROJECTS</h2>
     </div>
 
-    <div class="shadow mt-5 m-2 p-5">
+    <div class="projects-container shadow mt-5 m-2 p-5">
         {% for project in projects %}
         <a href="{% url 'project' project.id %}">
         <div class="project-card rounded p-2 my-4 ">
             <div class="d-flex justify-content-between mb-2">
                 <div class="flex-row">
-                    <h3>Project Title: {{project.name}}</h3>
+                    <h3 style="font-family:'Times New Roman', Times, serif ;" >Project Title: {{project.name}}</h3>
                 </div>
                 <div class="flex-row">
                     <span> {{project.perc_completed}}% completed</span>
                 </div>
             </div>
 
-            <div class="d-flex mb-4">
+            <div class="d-flex my-4">
                 <div class="flex-row">
                     <h6>PDO:</h6>
                 </div>
@@ -49,5 +49,5 @@
             <h2>No projects for you yet</h2>
         {% endfor %}
     </div>
-</div>
+</section>
 {% endblock content %}

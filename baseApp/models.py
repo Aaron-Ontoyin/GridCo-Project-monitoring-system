@@ -19,39 +19,22 @@ class CustomUser(AbstractUser):
 
 
 class CollectionFrequency(models.Model):
-    name = models.CharField(max_length=150)
-    prefix = models.CharField(max_length=50)
-    value = models.IntegerField()
+    name = models.CharField(max_length=50)
+    prefix = models.CharField(max_length=15)
+    num_entries = models.IntegerField()
+    
+    class Meta:
+        verbose_name_plural = "Collection Frequencies"
 
-    def __str__(self):
+    def __str__(self):  
         return self.name
 
 
-class YearEntries(models.Model):
-    name = models.CharField(max_length=50)
-
-
 class ProjectYear(models.Model):
-    year_num = models.IntegerField()        
-    collection_freq = models.ForeignKey(CollectionFrequency, on_delete=models.CASCADE, default=None)
-
-    actual_to_date = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    target = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    perc_complete = models.DecimalField(decimal_places=2, max_digits=10, default=0, null=True, blank=True)
-
-    year_entries = models.ManyToManyField(YearEntries, related_name='project_year', blank=True)
-
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            super().save(*args, **kwargs)
-
-            # Create year_entries with respect to self.num_year_entries            
-            count = 1
-            for _ in range(self.collection_freq.value):
-                self.year_entries.add(
-                    YearEntries.objects.create(name=f'{self.collection_freq.prefix} {count}'
-                ))                
-                count += 1
+    year_num = models.IntegerField()    
+    # Shares same collection freq with projects that are related to it
+    collection_freq = models.ForeignKey(CollectionFrequency,
+    on_delete=models.SET_NULL, related_name='project_year', blank=True, null=True)
 
     def __str__(self):
         return f"Project year {self.year_num} :{self.collection_freq.name}"
@@ -60,13 +43,15 @@ class ProjectYear(models.Model):
 class Project(models.Model):
     creator = models.ForeignKey(CustomUser, related_name='creator', 
     null=True, blank=True, on_delete=models.SET_NULL)
-    project_years = models.ManyToManyField(ProjectYear, related_name="projects", blank=True)
+    years = models.ManyToManyField(ProjectYear, related_name="projects", blank=True)
     name = models.CharField(max_length=250)
     duration = models.IntegerField()
     genPDO = models.CharField(max_length=1000)
     reporters = models.ManyToManyField(CustomUser, related_name='editing_projects', blank=True)
+    # Shares same collection freq with project years that are related to it
+    collection_freq = models.ForeignKey(CollectionFrequency, on_delete=models.SET_NULL,
+    null=True, related_name='projects', blank=True)
     created = models.DateField(auto_now_add=True)
-    collection_freq = models.ForeignKey(CollectionFrequency, on_delete=models.CASCADE)
 
     def perc_completed(self):
         return 15
@@ -74,16 +59,6 @@ class Project(models.Model):
     def all_years_fill(self):
         return (self.collection_freq.value + 3) * self.duration
     
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        # # Create project years
-        # count = 1
-        # for _ in range(self.duration):
-        #     py = ProjectYear.objects.create(year_id=count)
-        #     self.project_years.add(py)
-        
     def __str__(self):
         return self.name
 

@@ -2,36 +2,45 @@
 {% load static %}
 
 {% block content %}
-<div id="Main--body---div">
-    <div id="division-for-form">
-        <div id="login-div"><span id="Login" style="font-family: Oswald;">Log In</span></div>
-        <form action="" method="POST">
-            {% csrf_token %}
-            <div class="label" id="user_name_div">
-                <label for="username">Username</label> <br>                
-                {{ form.username }}
-            </div>
-            <div class="label">
-                <label for="password" id="pass-label">Password</label><br>
-                {{ form.password }}
-            </div>
-            <div id="remember-me">
-                <input type="checkbox" name="remember_Me" id="remember_Me"> <span>Remember Me</span> 
-            </div>
+<section class="custom-bg-image vh-100" style="background-image: url({% static '/images/elec2.jpg' %});">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card shadow-2-strong" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+              
+            <form action="" method="POST">
+              {% csrf_token %}
+              <h3 class="mb-5">Sign in</h3>
+              
+              <div class="form-outline mb-4">
+                <!-- <input type="email" id="typeEmailX-2" class="form-control form-control-lg" /> -->
+                {{form.username}} </br>
+                <label class="form-label" for="typeEmailX-2">Usename</label>                
+              </div>
+  
+              <div class="form-outline mb-4">
+                <!-- <input type="password" id="typePasswordX-2" class="form-control form-control-lg" /> -->
+                {{form.password}} </br>
+                <label class="form-label" for="typePasswordX-2">Password</label>                
+              </div>
+  
+              <!-- Checkbox -->
+              <div class="form-check d-flex justify-content-start mb-4">
+                <input class="form-check-input" type="checkbox" value="" id="form1Example3" />
+                <label class="form-check-label" for="form1Example3"> Remember password </label>
+              </div>
+  
+              <p class="small mb-5 pb-lg-2"><a class="text-dark-50" href="#!">Forgot password?</a></p>
+
+              <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
             
-            {% if messages %}
-            {% for message in messages %}
-            <div>
-                <p>{{message}}</p>
+            </form>
+
             </div>
-            {% endfor %}
-            {% endif %}
-            
-            <input type="submit" value="Submit" id="submit---btn"> <br>
-            <div id="forgot---password">
-                <span id="forgot_pass">Forgot Password</span>
-            </div>
-        </form>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </section>
 {% endblock content%}

@@ -25,7 +25,7 @@
 </head>
 <body>
     <nav
-    class="navbar .navbar-expand-lg navbar-dark py-3"
+    class="navbar .navbar-expand-lg navbar-ba py-1"
     style="background-color: white;"
     >
     <div class="container-fluid">
@@ -45,10 +45,17 @@
     </div>
     </nav>
 
-    <main class="pb-1">
+    <main>
         {% block content %}
         
         {% endblock content %}
     </main>
+
+    <footer class="page-footer font-small py-5">
+        <div class="footer-copyright text-light text-center">© 2023 Copyright:
+          <a class="text-light" href="/"> VirtualWorld.com</a>
+        </div>  
+    </footer>
+
 </body>
 </html>

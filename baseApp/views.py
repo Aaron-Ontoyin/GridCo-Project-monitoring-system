@@ -33,8 +33,7 @@ class LoginView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request, request.POST)
-        return redirect(self.success_url)
+        form = self.form_class(request, request.POST)        
         
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -46,9 +45,11 @@ class LoginView(View):
                 messages.info(request, f"Welcome {request.user.username}")
                 return redirect(self.success_url)
             else:
-                messages.error(request, "Incorrect Username or password")        
+                messages.error(request, "Incorrect Username or password")
+        else:
+            print(form.errors)
             
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'messages': messages})
 
 
 def logoutView(request):

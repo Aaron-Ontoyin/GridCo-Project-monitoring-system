@@ -1,3 +1,8 @@
+.custom-bg-image {
+    background-position: center;
+    background-size: cover;
+}
+
 .title-projects {
     width: fit-content;
 }
@@ -7,14 +12,18 @@ a {
     color: black;
 }
 
+.projects-container {
+    background-color: rgba(10, 10, 10, 0.6);
+    border-top: 6px solid #0a0909;
+}
+
 .project-card {
-    border-radius: 40px;
-    border: 3px solid whitesmoke;
-    background-color: rgb(236, 241, 245);
+    border-radius: 40px;    
+    background-color: rgb(242, 243, 243);
 }
 
 .project-card:hover {
-    border: 5px solid whitesmoke;
+    border: 1px solid whitesmoke;
 }
 
 .search-btn {
@@ -73,3 +82,7 @@ th {
     overflow: scroll;
 }
 /* End Project page */
+
+footer {
+    background-color: rgb(12, 12, 12);
+}

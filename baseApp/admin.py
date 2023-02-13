@@ -46,11 +46,14 @@ class ProjectAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if not obj.pk:
-            obj.creator = request.user
             obj.save()
-            for i in range(1, obj.duration+1):
-                py = ProjectYear.objects.filter(Q(year_num=i) & Q(collection_freq=obj.collection_freq))            
-                obj.project_years.add(py.first())                
+            obj.creator = request.user
+            year_num_list = range(1, obj.duration+1)
+            collection_freq = obj.collection_freq
+            project_years = ProjectYear.objects.filter(
+                Q(year_num__in=year_num_list) & Q(collection_freq=collection_freq)
+                )
+            obj.years.set(project_years)
         
         obj.save()
             
