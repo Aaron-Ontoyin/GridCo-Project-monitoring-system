@@ -64,9 +64,6 @@ class ProjectView(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data()
-        cf = self.get_object().collection_freq
-        context["project_yearly_entries"] = [
-            f"{cf.prefix} {count}" for count in range(1, cf.value+1)
-            ]
+        context['year_entries'] = self.get_object().get_year_entries()
         return context
         

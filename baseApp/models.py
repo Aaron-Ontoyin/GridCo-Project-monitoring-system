@@ -43,7 +43,7 @@ class ProjectYear(models.Model):
 class Project(models.Model):
     creator = models.ForeignKey(CustomUser, related_name='creator', 
     null=True, blank=True, on_delete=models.SET_NULL)
-    years = models.ManyToManyField(ProjectYear, related_name="projects", blank=True)
+    project_years = models.ManyToManyField(ProjectYear, related_name="projects", blank=True)
     name = models.CharField(max_length=250)
     duration = models.IntegerField()
     genPDO = models.CharField(max_length=1000)
@@ -52,6 +52,11 @@ class Project(models.Model):
     collection_freq = models.ForeignKey(CollectionFrequency, on_delete=models.SET_NULL,
     null=True, related_name='projects', blank=True)
     created = models.DateField(auto_now_add=True)
+
+    def get_year_entries(self):
+        freq = self.collection_freq
+        entries = [f"{freq.prefix} {position}" for position in range(1, freq.num_entries+1)]
+        return entries
 
     def perc_completed(self):
         return 15
@@ -64,8 +69,20 @@ class Project(models.Model):
 
 class Pdo(models.Model):
     name = models.CharField(max_length=250)
-    pdo_id = models.IntegerField()
+    pdo_num = models.IntegerField(unique=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="pdos")
+
+    def __str__(self):
+        return f"{self.project}: {self.name}"
+
+    class Meta:
+        verbose_name_plural = "Project Dev. Objectives"
+        ordering = ['project']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['project', 'pdo_num'], name='unique_pdo_num'
+            )
+        ]
 
 
 class SubPDO(models.Model):
@@ -91,23 +108,22 @@ class SubPDO(models.Model):
     )
     pdo = models.ForeignKey(Pdo, related_name='subpdos', on_delete=models.CASCADE)
     baseline = models.IntegerField(default=1)
-    baselineyear = models.DateField()
+    baselineyear = models.IntegerField()
     year_fills = [] # values corresponds to fields in the project years
     actual_to_date = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     end_target = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     perc_complete = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     detailed_data_src = models.CharField(max_length=1000, null=True, blank=True)
     comments = models.CharField(max_length=1000, null=True, blank=True)
-
-    def subpdo_id(self):
-        iden = f'{self.pdo.pdo_id}.'
-        pos = self.pdo.subpdo.count() + 1
-        val = f'PDO {iden}{pos}'
-        return val
+    subpdo_id = models.CharField(max_length=25, null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            iden = f'{self.pdo.pdo_num}'
+            pos = self.pdo.subpdos.count() + 1
+            self.subpdo_id = f'PDO {iden}.{pos}'
+        
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.subpdo_id()
-
-    def baseline_year(self):
-        return self.baseline_year_field.date.strftime('%Y')
-
+        return self.subpdo_id

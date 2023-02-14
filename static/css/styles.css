@@ -15,6 +15,8 @@ a {
 .projects-container {
     background-color: rgba(10, 10, 10, 0.6);
     border-top: 6px solid #0a0909;
+    height: 70vh;
+    overflow: scroll;
 }
 
 .project-card {
@@ -40,7 +42,7 @@ a {
 
 /* Start Project page */
 table {
-    font-family: arial, sans-serif;
+    font-family:'Courier New', Courier, monospace;
     border-collapse: collapse;
     width: max-content;
     overflow: scroll;

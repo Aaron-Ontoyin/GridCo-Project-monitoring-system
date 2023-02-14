@@ -22,7 +22,7 @@
           <th>Result Level</th>
           <th>Indicator</th>
           <th>Classification</th>
-          <th>Unit of Measurement</th>
+          <th>Measurement Unit</th>
           <th>Collection Frequency</th>
           <th>Baseline</th>
 
@@ -31,13 +31,13 @@
             Project Year {{year.year_num}}
             <table>
               <tr>
-                {% for entry in project_yearly_entries %}
-                <th class="nested-th">{{entry}} </th>
+                {% for entry in year_entries %}
+                  <th class="nested-th">{{entry}} </th>
                 {% endfor %}
-
-                <th class="nested-th">Year {{year.year_num}} Actual To Date</th>
+                
+                <th class="nested-th"><span title="Year {{year.year_num}} Actual to Date">Yr {{year.year_num}} ATD</span></th>
                 <th class="nested-th">Yearly Target</th>
-                <th class="nested-th">% complete</th>
+                <th class="nested-th"><span title="Percent Completed">% Comp</th></span>
               </tr>
             </table>
           </th>
@@ -48,9 +48,9 @@
             Progress to Date
             <table>
               <tr>
-                <th class="nested-th">Actual To Date</th>
-                <th class="nested-th">End of Project Target</th>
-                <th class="nested-th">% Complete to Date</th>
+                <th class="nested-th"><span title="Actual to Date">ATD</th></span>
+                <th class="nested-th"><span title="End of Project Target">EoPT</th></span>
+                <th class="nested-th"><span title="Percent Complete to Date">PCTD</th></span>
               </tr>
             </table>
           </th>
@@ -58,44 +58,51 @@
           <th>Comments</th>
         </tr>
 
-        <!-- Group 1 -->
-        <tr>
-          <td colspan="12" class="group-label">Group 1</td>
-        </tr>
-        <tr>
-          <td>KPI 1></td>
-          <td>Result Indicator 1</td>
-          <td>Indicator 1</td>
-          <td>Classification 1</td>
-          <td>Unit 1</td>
-          <td>Frequency 1</td>
-          <td>Baseline 1</td>
+        {% for pdo in project.pdos.all %}
+          <!-- Group Header -->
+          <tr>
+            <td colspan="12" class="group-label" style="text-align: left; padding-left: 10px;">{{pdo.pdo_id}}.0 {{pdo.name}}</td>
+          </tr>
           
-          <!-- Project years -->
-          {% for year in project.project_years.all %}
+          <!-- Row data -->
+          <tr>
+            <td>KPI 1</td>
+            <td>Result Indicator 1</td>
+            <td>Indicator 1</td>
+            <td>Classification 1</td>
+            <td>Unit 1</td>
+            <td>Frequency 1</td>
+            <td>Baseline 1</td>
+            
+            <!-- Project years -->
+            {% for year in project.project_years.all %}
+              <td>1
+                <!-- <table>
+                  <td class="nested-td">L11</td>
+                  <td class="nested-td">L22</td>
+                  <td class="nested-td">L33</td>
+                </table> -->
+              </td>          
+            {% endfor %}
+            <!-- End of project years -->
+            
+            <!-- Project progress -->
             <td>
-              <table>
-                <td class="nested-td">L11</td>
-                <td class="nested-td">L22</td>
-                <td class="nested-td">L33</td>
-              </table>
+              <table class="w-100">
+                <tr>
+                  <td class="nested-td">F11</td>
+                  <td class="nested-td">F22</td>
+                  <td class="nested-td">F33</td>
+                </tr>                
+              </table>          
             </td>          
-          {% endfor %}
-          <!-- End of project years -->
-          
-          <!-- Project progress -->
-          <td>
-            <table class="justify-content-between">
-              <td class="nested-td">F11</td>
-              <td class="nested-td">F22</td>
-              <td class="nested-td">F33</td>
-            </table>          
-          </td>          
-          <!-- End of project progress -->
+            <!-- End of project progress -->
 
-          <td style="padding-right: 100px; padding-left: 100px;">Data Source 1</td>
-          <td style="padding-right: 200px; padding-left: 200px;">Comment 1</td>
-        </tr>
+            <td style="padding-right: 100px; padding-left: 100px;">Data Source 1</td>
+            <td style="padding-right: 200px; padding-left: 200px;">Comment 1</td>
+          </tr>
+          <!-- End of row data -->
+        {% endfor %}
       </table>
   </div>
 
