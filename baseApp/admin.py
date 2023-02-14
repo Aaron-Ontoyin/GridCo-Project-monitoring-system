@@ -9,7 +9,7 @@ fields=["result_level", "indicator", "classification", "measurement_unit", "base
 PDOFormset = inlineformset_factory(Project, Pdo, fields=["name", "pdo_num"])
 
 class SubPDOInline(admin.TabularInline):
-    fields = fields=["result_level", "indicator", "classification", "measurement_unit", "baseline", "baselineyear"]
+    fields = fields=["result_level", "indicator", "classification", "measurement_unit", "baseline", "baselineyear", "detailed_data_src", "comments"]
     model = SubPDO
     formset = SubPDOFormSet
     extra = 0

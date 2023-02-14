@@ -23,8 +23,8 @@
           <th>Indicator</th>
           <th>Classification</th>
           <th>Measurement Unit</th>
-          <th>Collection Frequency</th>
           <th>Baseline</th>
+          <th>Baseline Yr</th>
 
           {% for year in project.project_years.all %}
           <th>
@@ -61,47 +61,55 @@
         {% for pdo in project.pdos.all %}
           <!-- Group Header -->
           <tr>
-            <td colspan="12" class="group-label" style="text-align: left; padding-left: 10px;">{{pdo.pdo_id}}.0 {{pdo.name}}</td>
+            <td colspan="12" class="group-label" style="text-align: left; padding-left: 100px;">{{pdo.pdo_num}}.0 {{pdo.name}}</td>
           </tr>
           
           <!-- Row data -->
-          <tr>
-            <td>KPI 1</td>
-            <td>Result Indicator 1</td>
-            <td>Indicator 1</td>
-            <td>Classification 1</td>
-            <td>Unit 1</td>
-            <td>Frequency 1</td>
-            <td>Baseline 1</td>
-            
-            <!-- Project years -->
-            {% for year in project.project_years.all %}
-              <td>1
-                <!-- <table>
-                  <td class="nested-td">L11</td>
-                  <td class="nested-td">L22</td>
-                  <td class="nested-td">L33</td>
-                </table> -->
+          {% for subpdo in pdo.subpdos.all %}
+            <tr>
+              <td>{{ subpdo.subpdo_id }}</td>
+              <td>{{ subpdo.result_level }}</td>
+              <td>{{ subpdo.indicator }}</td>
+              <td>{{ subpdo.classification }}</td>
+              <td>{{ subpdo.measurement_unit }}</td>
+              <td>{{ subpdo.baseline }}</td>              
+              <td>{{ subpdo.baselineyear }}</td>
+              
+              <!-- Project years -->
+              {% for year in project.project_years.all %}              
+                <td>                
+                  <table class="w-100">
+                    <tr>
+                      {% for entry_Value in year_collection_freq_range %}
+                      <td class="nested-td">L11</td>
+                      {% endfor %}
+                      <td class="nested-td">L11</td>
+                      <td class="nested-td">L22</td>
+                      <td class="nested-td">L33</td>
+                    </tr>
+                  </table>
+                </td>              
+              {% endfor %}
+              <!-- End of project years -->
+              
+              <!-- Project progress -->
+              <td>
+                <table class="w-100">
+                  <tr>
+                    <td class="nested-td">F11</td>
+                    <td class="nested-td">F22</td>
+                    <td class="nested-td">F33</td>
+                  </tr>                
+                </table>          
               </td>          
-            {% endfor %}
-            <!-- End of project years -->
-            
-            <!-- Project progress -->
-            <td>
-              <table class="w-100">
-                <tr>
-                  <td class="nested-td">F11</td>
-                  <td class="nested-td">F22</td>
-                  <td class="nested-td">F33</td>
-                </tr>                
-              </table>          
-            </td>          
-            <!-- End of project progress -->
+              <!-- End of project progress -->
 
-            <td style="padding-right: 100px; padding-left: 100px;">Data Source 1</td>
-            <td style="padding-right: 200px; padding-left: 200px;">Comment 1</td>
-          </tr>
-          <!-- End of row data -->
+              <td style="padding-right: 100px; padding-left: 100px;">{{ subpdo.detailed_data_src }}</td>
+              <td style="padding-right: 200px; padding-left: 200px;">{{ subpdo.comments }}</td>
+            </tr>
+            <!-- End of row data -->
+          {% endfor %}
+
         {% endfor %}
       </table>
   </div>

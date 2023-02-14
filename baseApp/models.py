@@ -4,12 +4,19 @@ from django.contrib.auth.models import AbstractUser
 from datetime import date, timedelta
 
 
-RESULT_LEVEL_CHOICES = [('1',1), ('2',2)]
+RESULT_LEVEL_CHOICES = [
+    ('Output','Output'),
+    ('Outcome','Outcome'),
+    ('Goal', 'Goal')
+    ]
 INDICATOR_CHOICES = [('1',1), ('2',2)]
 CLASSIFICATION_CHOICES = [('1',1), ('2',2)]
-MEASUREMENT_UNIT_CHOICES = [('1',1), ('2',2)]
-MONTH_CHOICES = [(1,1), (2,2)]
-    
+MEASUREMENT_UNIT_CHOICES = [
+    ('Cummulative','Cummulative'),
+    ('Number','Number'),
+    ('Percentage','Percentage')
+    ]
+
 
 class CustomUser(AbstractUser):
     user_id = models.CharField(max_length=7)
@@ -69,7 +76,7 @@ class Project(models.Model):
 
 class Pdo(models.Model):
     name = models.CharField(max_length=250)
-    pdo_num = models.IntegerField(unique=True)
+    pdo_num = models.IntegerField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="pdos")
 
     def __str__(self):
@@ -85,15 +92,20 @@ class Pdo(models.Model):
         ]
 
 
+class Entry(models.Model):
+    value = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    subpdo = models.ForeignKey('SubPDO', on_delete=models.CASCADE, related_name='entries')
+
+
 class SubPDO(models.Model):
-    result_level = models.CharField(
-        max_length=20,
-        choices = RESULT_LEVEL_CHOICES,
-        default = ""
-    )
     indicator = models.CharField(
         max_length=20,
         choices = INDICATOR_CHOICES,
+        default = ""
+    )
+    result_level = models.CharField(
+        max_length=20,
+        choices = RESULT_LEVEL_CHOICES,
         default = ""
     )
     classification = models.CharField(
@@ -107,9 +119,9 @@ class SubPDO(models.Model):
         default = ""
     )
     pdo = models.ForeignKey(Pdo, related_name='subpdos', on_delete=models.CASCADE)
+
     baseline = models.IntegerField(default=1)
     baselineyear = models.IntegerField()
-    year_fills = [] # values corresponds to fields in the project years
     actual_to_date = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     end_target = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     perc_complete = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
@@ -122,8 +134,15 @@ class SubPDO(models.Model):
             iden = f'{self.pdo.pdo_num}'
             pos = self.pdo.subpdos.count() + 1
             self.subpdo_id = f'PDO {iden}.{pos}'
-        
-        super().save(*args, **kwargs)
+
+            super().save(*args, **kwargs)
+
+            project = self.pdo.project
+            total_entries =  project.collection_freq.num_entries * project.project_years.count()            
+            for _ in range(total_entries):
+                Entry.objects.create(subpdo=self)
+        else:
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return self.subpdo_id
