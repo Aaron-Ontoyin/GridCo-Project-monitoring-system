@@ -1,15 +1,43 @@
 from django.contrib import admin
 from django.forms import inlineformset_factory
+from django.forms import BaseInlineFormSet
 from .models import CollectionFrequency, CustomUser, Pdo, Project, SubPDO, ProjectYear
 from django.db.models import Q
 
-SubPDOFormSet = inlineformset_factory(Pdo, SubPDO,
-fields=["result_level", "indicator", "classification", "measurement_unit", "baseline", "baselineyear"]
+
+class DeletableModelInlineFormset(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for form in self.forms:
+            form.fields['DELETE'].widget.attrs['class'] = 'delete-checkbox'
+
+    def save(self, commit=True):
+        # Call the superclass's save() method first
+        result = super().save(commit=commit)
+
+        # Delete objects that have been marked for deletion
+        for form in self.deleted_forms:
+            form.instance.delete()
+
+        return result
+
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        for form in self.forms:
+            if form.cleaned_data.get('DELETE') and not form.instance.pk:
+                self.errors.append('Cannot delete a new object.')
+
+
+SubPDOFormSet = inlineformset_factory(Pdo, SubPDO, formset=DeletableModelInlineFormset, can_delete=True,
+fields=["result_level", "classification", "measurement_unit", "baseline", "baselineyear"]
 )
-PDOFormset = inlineformset_factory(Project, Pdo, fields=["name", "pdo_num"])
+PDOFormset = inlineformset_factory(Project, Pdo, fields=["name", "pdo_num"],
+formset=DeletableModelInlineFormset, can_delete=True
+)
 
 class SubPDOInline(admin.TabularInline):
-    fields = fields=["result_level", "indicator", "classification", "measurement_unit", "baseline", "baselineyear", "detailed_data_src", "comments"]
     model = SubPDO
     formset = SubPDOFormSet
     extra = 0

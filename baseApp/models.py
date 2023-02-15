@@ -9,7 +9,6 @@ RESULT_LEVEL_CHOICES = [
     ('Outcome','Outcome'),
     ('Goal', 'Goal')
     ]
-INDICATOR_CHOICES = [('1',1), ('2',2)]
 CLASSIFICATION_CHOICES = [('1',1), ('2',2)]
 MEASUREMENT_UNIT_CHOICES = [
     ('Cummulative','Cummulative'),
@@ -75,6 +74,9 @@ class Project(models.Model):
         return self.name
 
 class Pdo(models.Model):
+    """
+    This is the indicator. Under each indicator we have PDO but named SubPDO
+    """
     name = models.CharField(max_length=250)
     pdo_num = models.IntegerField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="pdos")
@@ -90,6 +92,7 @@ class Pdo(models.Model):
                 fields=['project', 'pdo_num'], name='unique_pdo_num'
             )
         ]
+        verbose_name_plural = "Indicators"
 
 
 class Entry(models.Model):
@@ -98,11 +101,9 @@ class Entry(models.Model):
 
 
 class SubPDO(models.Model):
-    indicator = models.CharField(
-        max_length=20,
-        choices = INDICATOR_CHOICES,
-        default = ""
-    )
+    """
+    Supposed to be PDO rather. Because every PDO is under an Indicator
+    """
     result_level = models.CharField(
         max_length=20,
         choices = RESULT_LEVEL_CHOICES,
@@ -145,4 +146,4 @@ class SubPDO(models.Model):
             super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.subpdo_id
+        return f"PDO {self.subpdo_id}"
