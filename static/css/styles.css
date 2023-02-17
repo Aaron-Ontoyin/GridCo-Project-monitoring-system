@@ -52,19 +52,17 @@ td,
 th {
     border-bottom: 1px solid #dddddd;
     text-align: left;
-    padding: 8px;
-    text-align: center;
-    padding-right: 5px;
+    line-height: 40px;
+    padding-right: 40px;    
 }
 
 .nested-th {
     border-top: 1px solid #dddddd;
-    padding-left: 15px;
     padding-right: 15px;    
 }
 
 .nested-td {
-    border: none;
+    border: none;    
 }
 
 th {

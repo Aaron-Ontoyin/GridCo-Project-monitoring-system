@@ -9,12 +9,15 @@ RESULT_LEVEL_CHOICES = [
     ('Outcome','Outcome'),
     ('Goal', 'Goal')
     ]
-CLASSIFICATION_CHOICES = [('1',1), ('2',2)]
 MEASUREMENT_UNIT_CHOICES = [
+    ('Number', 'Number'),
+    ('Percentage', 'Percentage')
+]
+CLASSIFICATION_CHOICES = [
     ('Cummulative','Cummulative'),
     ('Number','Number'),
     ('Percentage','Percentage')
-    ]
+]
 
 
 class CustomUser(AbstractUser):
@@ -84,8 +87,7 @@ class Pdo(models.Model):
     def __str__(self):
         return f"{self.project}: {self.name}"
 
-    class Meta:
-        verbose_name_plural = "Project Dev. Objectives"
+    class Meta:        
         ordering = ['project']
         constraints = [
             models.UniqueConstraint(
@@ -146,4 +148,4 @@ class SubPDO(models.Model):
             super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"PDO {self.subpdo_id}"
+        return f"{self.subpdo_id}"

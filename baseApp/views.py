@@ -62,9 +62,15 @@ class ProjectView(DetailView):
     context_object_name = 'project'
     template_name = 'baseApp/project.html'
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['year_entries'] = self.get_object().get_year_entries()
         context['year_collection_freq_range'] = range(self.get_object().collection_freq.num_entries)
+        context['project_years'] = self.get_object().project_years.all()
+        context['editable'] = True if self.request.user in self.get_object().reporters.all() else False
         return context
+    
+    # def post(self, request, *args, **kwargs):
+    #     year_entries = self.get_object().get_year_entries()
+    #     for field in request.
         

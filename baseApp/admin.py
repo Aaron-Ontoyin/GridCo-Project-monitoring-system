@@ -38,6 +38,7 @@ formset=DeletableModelInlineFormset, can_delete=True
 )
 
 class SubPDOInline(admin.TabularInline):
+    fields=["result_level", "classification", "measurement_unit", "baseline", "baselineyear", "detailed_data_src", "comments"]
     model = SubPDO
     formset = SubPDOFormSet
     extra = 0

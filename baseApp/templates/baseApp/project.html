@@ -20,30 +20,30 @@
         <tr>
           <th>Indicator Ref</th>
           <th>Result Level</th>
-          <th>Indicator</th>
           <th>Classification</th>
           <th>Measurement Unit</th>
           <th>Baseline</th>
           <th>Baseline Yr</th>
 
-          {% for year in project.project_years.all %}
+          {% for year in project_years %}
           <th>
+
             Project Year {{year.year_num}}
             <table>
               <tr>
                 {% for entry in year_entries %}
-                  <th class="nested-th">{{entry}} </th>
+                  <th class="nested-th">{{entry}}</th>
                 {% endfor %}
                 
                 <th class="nested-th"><span title="Year {{year.year_num}} Actual to Date">Yr {{year.year_num}} ATD</span></th>
-                <th class="nested-th">Yearly Target</th>
-                <th class="nested-th"><span title="Percent Completed">% Comp</th></span>
+                <th class="nested-th"><span title="Yearly Target">Yrly Target</span></th>
+                <th class="nested-th"><span title="Percent Completed">Percent Comp</th></span>
               </tr>
             </table>
+
           </th>
           {% endfor %}
       
-
           <th>
             Progress to Date
             <table>
@@ -61,51 +61,104 @@
         {% for pdo in project.pdos.all %}
           <!-- Group Header -->
           <tr>
-            <td colspan="12" class="group-label" style="text-align: left; padding-left: 100px;">{{pdo.pdo_num}}.0 {{pdo.name}}</td>
+            <td colspan="12" class="group-label" style="text-align: left; padding-left: 10px;">Indicator {{pdo.pdo_num}}: {{pdo.name}}</td>
           </tr>
           
           <!-- Row data -->
           {% for subpdo in pdo.subpdos.all %}
             <tr>
               <td>{{ subpdo.subpdo_id }}</td>
-              <td>{{ subpdo.result_level }}</td>
-              <td>{{ subpdo.indicator }}</td>
+              <td>{{ subpdo.result_level }}</td>              
               <td>{{ subpdo.classification }}</td>
               <td>{{ subpdo.measurement_unit }}</td>
               <td>{{ subpdo.baseline }}</td>              
               <td>{{ subpdo.baselineyear }}</td>
               
               <!-- Project years -->
-              {% for year in project.project_years.all %}              
-                <td>                
-                  <table class="w-100">
-                    <tr>
-                      {% for entry_Value in year_collection_freq_range %}
-                      <td class="nested-td">L11</td>
-                      {% endfor %}
-                      <td class="nested-td">L11</td>
-                      <td class="nested-td">L22</td>
-                      <td class="nested-td">L33</td>
-                    </tr>
-                  </table>
-                </td>              
+              {% for yr in project_years %}              
+              <td> 
+
+                <table class="w-100">
+                  <tr>
+                    {% for entry_value in year_collection_freq_range %}
+                      h
+                      {% if editable %}
+                        <td class="nested-td pl-2"
+                        data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}"
+                        style="background-color: aliceblue;"
+                        >
+                        {{entry_value}}
+                        </td>
+
+                        <!-- modal -->
+                        <div class="modal fade text-dark" id="subPDOModal{{subpdo.pk}}" tabindex="-1" role="dialog" aria-labelledby="subPDOEntryModalTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="subPDOModalLongTitle{{subpdo.pk}}" style="font-family: 'Times New Roman', Times, serif;">
+                                  Updating... <br>
+                                  {{ subpdo.pdo.name }}: {{ subpdo }} in Project Yr {{yr.year_num}}, half 1
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+
+                              <div class="modal-body">
+                                <form action="" method="POST">
+                                  {% csrf_token %}
+                                  
+                                    {% for entry in year_entries %}                          
+                                      <div class="form-group my-1 d-flex mx-5 justify-content-around">
+                                        <label for="entry{{entry.pk}}">{{entry}}</label>
+                                        <input type="number" name="entry{{entry.pk}}" id="{{entry.pk}}"
+                                        style="border-radius: 10px; width: 100px; height: 40px;"
+                                        >
+                                      </div>                          
+                                    {% endfor %}
+
+                                </form>                    
+                              </div>
+
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% else %}
+                        <td class="nested-td">{{entry_value}}</td>
+                      {% endif %}
+
+                    {% endfor %}
+
+                    <td class="nested-td">L11</td>
+                    <td class="nested-td">L22</td>
+                    <td class="nested-td">L33</td>
+                  </tr>
+                </table>
+
+              </td>
               {% endfor %}
               <!-- End of project years -->
               
               <!-- Project progress -->
               <td>
+
                 <table class="w-100">
                   <tr>
                     <td class="nested-td">F11</td>
                     <td class="nested-td">F22</td>
                     <td class="nested-td">F33</td>
                   </tr>                
-                </table>          
+                </table>
+
               </td>          
               <!-- End of project progress -->
 
-              <td style="padding-right: 100px; padding-left: 100px;">{{ subpdo.detailed_data_src }}</td>
-              <td style="padding-right: 200px; padding-left: 200px;">{{ subpdo.comments }}</td>
+              <td style="padding-right: 150px;">{{ subpdo.detailed_data_src }}</td>
+              <td style="padding-right: 150px;">{{ subpdo.comments }}</td>
             </tr>
             <!-- End of row data -->
           {% endfor %}
