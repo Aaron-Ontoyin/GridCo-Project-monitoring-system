@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.forms import inlineformset_factory
 from django.forms import BaseInlineFormSet
-from .models import CollectionFrequency, CustomUser, Pdo, Project, SubPDO, ProjectYear
+from .models import CollectionFrequency, CustomUser, Pdo, Project, SubPDO, ProjectYear, Entry
 from django.db.models import Q
 
 
@@ -92,5 +92,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 admin.site.register(CustomUser)
 admin.site.register(Pdo, PDOAdmin)
+admin.site.register(SubPDO)
+admin.site.register(Entry)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(CollectionFrequency)

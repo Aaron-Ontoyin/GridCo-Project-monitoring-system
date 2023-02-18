@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
 
-from .models import Project
+from .models import Project, Entry
 
 
 class IndexView(LoginRequiredMixin, ListView):
@@ -70,7 +70,13 @@ class ProjectView(DetailView):
         context['editable'] = True if self.request.user in self.get_object().reporters.all() else False
         return context
     
-    # def post(self, request, *args, **kwargs):
-    #     year_entries = self.get_object().get_year_entries()
-    #     for field in request.
+    def post(self, request, *args, **kwargs):        
+        form = request.POST
+        entry = Entry.objects.get(pk=form.get('entry_pk'))
+        entry.value = form.get('entry_value')
+        entry.save()
+
+        return redirect('project', pk=self.get_object().pk)
+
+
         

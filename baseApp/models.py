@@ -40,7 +40,7 @@ class CollectionFrequency(models.Model):
 
 
 class ProjectYear(models.Model):
-    year_num = models.IntegerField()    
+    year_num = models.IntegerField()
     # Shares same collection freq with projects that are related to it
     collection_freq = models.ForeignKey(CollectionFrequency,
     on_delete=models.SET_NULL, related_name='project_year', blank=True, null=True)
@@ -54,7 +54,7 @@ class Project(models.Model):
     null=True, blank=True, on_delete=models.SET_NULL)
     project_years = models.ManyToManyField(ProjectYear, related_name="projects", blank=True)
     name = models.CharField(max_length=250)
-    duration = models.IntegerField()
+    duration = models.PositiveIntegerField()
     genPDO = models.CharField(max_length=1000)
     reporters = models.ManyToManyField(CustomUser, related_name='editing_projects', blank=True)
     # Shares same collection freq with project years that are related to it
@@ -100,11 +100,29 @@ class Pdo(models.Model):
 class Entry(models.Model):
     value = models.DecimalField(max_digits=15, decimal_places=2, default=0, null=True, blank=True)
     subpdo = models.ForeignKey('SubPDO', on_delete=models.CASCADE, related_name='entries')
+    index = models.IntegerField()
+
+    def get_year_entry(self):
+        year = self.subpdo.pdo.project.project_years.first()
+        collection_freq = year.collection_freq
+        year_entries = [f"{collection_freq.prefix} {i}" for i in range(1, collection_freq.num_entries+1)]        
+        # starts with last entry: idx and year_entry_index are the same but opposite signs
+        idx = -1 # Index of current entry in negation
+        year_entry_at = collection_freq.num_entries # Index of current entry in positive
+
+        for _  in year_entries: # got through number of year entries times            
+            if self.index % year_entry_at == 0: # if the index of self is divisible by current entry psoition
+                return year_entries[idx]
+            year_entry_at -= 1 # we move 1 step towards the first entry
+            idx -= 1 # we move 1 step towards the first entry
 
     def __str__(self):
         if self.value is None:
-            return f"-- {self.subpdo}"
-        return f"Entry {self.value} {self.subpdo}"
+            return f"{self.subpdo.pdo}: {self.subpdo} --"
+        return f"{self.subpdo.pdo}: {self.subpdo} {self.value}"
+
+    class Meta:
+        verbose_name_plural = "Entries"
 
 
 class SubPDO(models.Model):
@@ -137,6 +155,16 @@ class SubPDO(models.Model):
     comments = models.CharField(max_length=1000, null=True, blank=True)
     subpdo_id = models.CharField(max_length=25, null=True, blank=True)
 
+    def get_ATD(self):
+        return 6
+    
+    def get_yrly_target(self):
+        return 10
+    
+    def get_perc_comp(self):
+        return 50
+
+
     def save(self, *args, **kwargs):
         if not self.pk:
             iden = f'{self.pdo.pdo_num}'
@@ -147,8 +175,10 @@ class SubPDO(models.Model):
 
             project = self.pdo.project
             total_entries =  project.collection_freq.num_entries * project.project_years.count()
+            index = 1
             for _ in range(total_entries):
-                Entry.objects.create(subpdo=self)
+                Entry.objects.create(subpdo=self, index=index)
+                index += 1
         else:
             super().save(*args, **kwargs)
 
@@ -168,10 +198,8 @@ class SubPDO(models.Model):
     
     def get_entries_with_respect_to_years(self):
         years = self.pdo.project.project_years.all()
-        entries_in_year_bages = self.get_entries_in_bages()
-        zip_val = zip(entries_in_year_bages, years)
-        print(zip)
-        return zip_val
+        entries_in_year_bages = self.get_entries_in_bages()        
+        return zip(entries_in_year_bages, years)
 
     def __str__(self):
         return f"{self.subpdo_id}"
