@@ -30,7 +30,7 @@
 
             Project Year {{year.year_num}}
             <table>
-              <tr>
+              <tr class="px-5">
                 {% for entry in year_entries %}
                   <th class="nested-th">{{entry}}</th>
                 {% endfor %}
@@ -75,64 +75,28 @@
               <td>{{ subpdo.baselineyear }}</td>
               
               <!-- Project years -->
-              {% for yr in project_years %}              
-              <td> 
-
+              {% for entries_in_a_yr in subpdo.get_entries_with_respect_to_years %}
+              <td>                
                 <table class="w-100">
                   <tr>
-                    {% for entry_value in year_collection_freq_range %}
-                      h
+                    <!-- This is the set of entries -->
+                    {% for entry in entries_in_a_yr.0 %}
+                      
                       {% if editable %}
                         <td class="nested-td pl-2"
-                        data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}"
+                        data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}{{yr.year_num}}{{entry.pk}}"
                         style="background-color: aliceblue;"
                         >
-                        {{entry_value}}
+                        {{entry.value}}
                         </td>
 
                         <!-- modal -->
-                        <div class="modal fade text-dark" id="subPDOModal{{subpdo.pk}}" tabindex="-1" role="dialog" aria-labelledby="subPDOEntryModalTitle" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="subPDOModalLongTitle{{subpdo.pk}}" style="font-family: 'Times New Roman', Times, serif;">
-                                  Updating... <br>
-                                  {{ subpdo.pdo.name }}: {{ subpdo }} in Project Yr {{yr.year_num}}, half 1
-                                </h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-
-                              <div class="modal-body">
-                                <form action="" method="POST">
-                                  {% csrf_token %}
-                                  
-                                    {% for entry in year_entries %}                          
-                                      <div class="form-group my-1 d-flex mx-5 justify-content-around">
-                                        <label for="entry{{entry.pk}}">{{entry}}</label>
-                                        <input type="number" name="entry{{entry.pk}}" id="{{entry.pk}}"
-                                        style="border-radius: 10px; width: 100px; height: 40px;"
-                                        >
-                                      </div>                          
-                                    {% endfor %}
-
-                                </form>                    
-                              </div>
-
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        {% include 'baseApp/update_entry_modal.html' %}
                       {% else %}
-                        <td class="nested-td">{{entry_value}}</td>
+                        <td class="nested-td">{{entry.value}}</td>
                       {% endif %}
 
                     {% endfor %}
-
                     <td class="nested-td">L11</td>
                     <td class="nested-td">L22</td>
                     <td class="nested-td">L33</td>

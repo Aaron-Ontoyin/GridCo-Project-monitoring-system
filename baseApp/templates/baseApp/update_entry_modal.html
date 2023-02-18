@@ -1,0 +1,38 @@
+
+<div class="modal fade text-dark" id="subPDOModal{{subpdo.pk}}{{yr.year_num}}{{entry.pk}}" tabindex="-1" role="dialog" aria-labelledby="subPDOEntryModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="subPDOModalLongTitle{{subpdo.pk}}{{yr.year_num}}{{entry.pk}}" style="font-family: 'Times New Roman', Times, serif;">
+            Updating... <br>
+            {{ subpdo.pdo.name }}: {{ subpdo }} in Project Yr {{ entries_in_a_yr.1.year_num }}, {{ entry.value }}
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form action="" method="POST">
+            {% csrf_token %}
+            
+              {% for entry in year_entries %}                          
+                <div class="form-group my-1 d-flex mx-5 justify-content-around">
+                  <label for="entry{{entry.pk}}{{yr.year_num}}{{entry.pk}}">{{entry.value}}</label>
+                  <input type="number" name="entry{{entry.pk}}{{yr.year_num}}{{entry.pk}}"
+                  id="{{entry.pk}}{{yr.year_num}}{{entry.pk}}"
+                  style="border-radius: 10px; width: 100px; height: 40px;"
+                  >
+                </div>
+              {% endfor %}
+
+          </form>                    
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+</div>

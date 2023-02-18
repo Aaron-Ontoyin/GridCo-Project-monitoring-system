@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from datetime import date, timedelta
-
+from itertools import zip_longest
 
 RESULT_LEVEL_CHOICES = [
     ('Output','Output'),
@@ -98,8 +98,13 @@ class Pdo(models.Model):
 
 
 class Entry(models.Model):
-    value = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    value = models.DecimalField(max_digits=15, decimal_places=2, default=0, null=True, blank=True)
     subpdo = models.ForeignKey('SubPDO', on_delete=models.CASCADE, related_name='entries')
+
+    def __str__(self):
+        if self.value is None:
+            return f"-- {self.subpdo}"
+        return f"Entry {self.value} {self.subpdo}"
 
 
 class SubPDO(models.Model):
@@ -131,7 +136,7 @@ class SubPDO(models.Model):
     detailed_data_src = models.CharField(max_length=1000, null=True, blank=True)
     comments = models.CharField(max_length=1000, null=True, blank=True)
     subpdo_id = models.CharField(max_length=25, null=True, blank=True)
-    
+
     def save(self, *args, **kwargs):
         if not self.pk:
             iden = f'{self.pdo.pdo_num}'
@@ -141,11 +146,32 @@ class SubPDO(models.Model):
             super().save(*args, **kwargs)
 
             project = self.pdo.project
-            total_entries =  project.collection_freq.num_entries * project.project_years.count()            
+            total_entries =  project.collection_freq.num_entries * project.project_years.count()
             for _ in range(total_entries):
                 Entry.objects.create(subpdo=self)
         else:
             super().save(*args, **kwargs)
+
+    def get_entries_in_bages(self):
+        num_per_yr = self.pdo.project.collection_freq.num_entries
+        iterator = self.entries.all().iterator()
+        chunks = zip_longest(*([iterator] * num_per_yr))
+
+        entries_in_bages = []
+        for chunk in chunks:
+            chunk_filtered = filter(lambda x: x is not None, chunk)
+            chunk_filtered = list(chunk_filtered)
+            if chunk_filtered:
+                entries_in_bages.append(self.entries.filter(pk__in=[item.pk for item in chunk_filtered]))
+
+        return entries_in_bages
+    
+    def get_entries_with_respect_to_years(self):
+        years = self.pdo.project.project_years.all()
+        entries_in_year_bages = self.get_entries_in_bages()
+        zip_val = zip(entries_in_year_bages, years)
+        print(zip)
+        return zip_val
 
     def __str__(self):
         return f"{self.subpdo_id}"
