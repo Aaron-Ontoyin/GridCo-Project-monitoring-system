@@ -57,7 +57,7 @@ def logoutView(request):
     return redirect('login')
 
 
-class ProjectView(DetailView):
+class ProjectView(LoginRequiredMixin, DetailView):
     model = Project
     context_object_name = 'project'
     template_name = 'baseApp/project.html'

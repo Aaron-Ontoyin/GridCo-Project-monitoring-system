@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 
 {% block content %}
-<section class="vh-100">
+<section class="vh-100">  
 
   <div class="shadow-sm p-2 m-2">
     <h1>{{project.name}}</h1>
@@ -17,47 +17,50 @@
 
   <div class="mt-4 project-table">
       <table>
-        <tr>
-          <th>Indicator Ref</th>
-          <th>Result Level</th>
-          <th>Classification</th>
-          <th>Measurement Unit</th>
-          <th>Baseline</th>
-          <th>Baseline Yr</th>
+        <thead>
+          <tr>
+            <th>Indicator Ref</th>
+            <th>Result Level</th>
+            <th>Classification</th>
+            <th>Measurement Unit</th>
+            <th>Baseline</th>
+            <th>Baseline Yr</th>
 
-          {% for year in project_years %}
-          <th>
+            {% for year in project_years %}
+            <th style="padding-right: 0px;">
 
-            Project Year {{year.year_num}}
-            <table>
-              <tr class="px-5">
-                {% for entry in year_entries %}
-                  <th class="nested-th">{{entry}}</th>
-                {% endfor %}
-                
-                <th class="nested-th"><span title="Year {{year.year_num}} Actual to Date">Yr {{year.year_num}} ATD</span></th>
-                <th class="nested-th"><span title="Yearly Target">Yrly Target</span></th>
-                <th class="nested-th"><span title="Percent Completed">Percent Comp</th></span>
-              </tr>
-            </table>
+              Project Year {{year.year_num}}
+              <table class="w-100 subtable">
+                <tr>
+                  {% for entry in year_entries %}
+                    <th class="entryh">{{entry}}</th>
+                  {% endfor %}
+                  
+                  <th><span title="Yearly Target">YT</span></th>
+                  <th><span title="Year {{year.year_num}} Actual to Date">Yr{{year.year_num}} ATD</span></th>
+                  <th><span title="Percent Completed">PC</th></span>
+                </tr>
+              </table>
 
-          </th>
-          {% endfor %}
-      
-          <th>
-            Progress to Date
-            <table>
-              <tr>
-                <th class="nested-th"><span title="Actual to Date">ATD</th></span>
-                <th class="nested-th"><span title="End of Project Target">EoPT</th></span>
-                <th class="nested-th"><span title="Percent Complete to Date">PCTD</th></span>
-              </tr>
-            </table>
-          </th>
-          <th>Data Source</th>
-          <th>Comments</th>
-        </tr>
+            </th>
+            {% endfor %}
+        
+            <th style="padding-right: 0px;">
+              Progress to Date
+              <table class="w-100 subtable">
+                <tr>
+                  <th><span title="End of Project Target">EoPT</th></span>
+                  <th><span title="Actual to Date">ATD</th></span>
+                  <th><span title="Percent Complete to Date">PCTD</th></span>
+                </tr>
+              </table>
+            </th>
+            <th>Data Source</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
 
+        <tbody>
         {% for pdo in project.pdos.all %}
           <!-- Group Header -->
           <tr>
@@ -66,7 +69,7 @@
           
           <!-- Row data -->
           {% for subpdo in pdo.subpdos.all %}
-            <tr>
+            <tr style="border-bottom: 2px solid #e7e4e4;">
               <td>{{ subpdo.subpdo_id }}</td>
               <td>{{ subpdo.result_level }}</td>              
               <td>{{ subpdo.classification }}</td>
@@ -76,40 +79,38 @@
               
               <!-- Project years -->
               {% for entries_in_a_yr in subpdo.get_entries_with_respect_to_years %}
-              <td>                
-                <table class="w-100">
+              <td> 
+
+                <table class="w-100" class="subtable">
                   <tr>
                     <!-- This is the set of entries -->
-                    {% for entry in entries_in_a_yr.0 %}
-                      
-                      {% if editable %}
-                        <td class="nested-td pl-2"
-                        data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}{{yr.year_num}}{{entry.pk}}"
-                        style="background-color: aliceblue;"
+                    {% for entry in entries_in_a_yr.0 %}                    
+                        
+                      {% if editable and not entry.yrly_target_index %} <!-- if editable and not yearly target -->
+                        <td style="background-color: aliceblue;"
+                          data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}{{yr.year_num}}{{entry.pk}}"
+                          class="entryd"
                         >
                         {{entry.value}}
                         </td>
-
                         <!-- modal -->
                         {% include 'baseApp/update_entry_modal.html' %}
                       {% else %}
-                        <td class="nested-td">{{entry.value}}</td>
+                        <!-- This is a yearly target -->
+                        <td style="width: 125px;">{{entry.value}}</td>
                       {% endif %}
-
+                      
                     {% endfor %}
-                    <td class="nested-td">{{ subpdo.get_ATD }}</td>
-                    <td class="nested-td">{{ subpdo.get_yrly_target }}</td>
-                    <td class="nested-td">{{ subpdo.get_perc_comp }}</td>
+                    <td style="width: 165px;">{{ subpdo.get_ATD }}</td>
+                    <td style="width: 120px;">{{ subpdo.get_perc_comp }}</td>
                   </tr>
                 </table>
-
               </td>
-              {% endfor %}
+              {% endfor %}              
               <!-- End of project years -->
               
               <!-- Project progress -->
               <td>
-
                 <table class="w-100">
                   <tr>
                     <td class="nested-td">F11</td>
@@ -117,19 +118,25 @@
                     <td class="nested-td">F33</td>
                   </tr>                
                 </table>
-
               </td>          
               <!-- End of project progress -->
 
-              <td style="padding-right: 150px;">{{ subpdo.detailed_data_src }}</td>
-              <td style="padding-right: 150px;">{{ subpdo.comments }}</td>
+              <td style="overflow: scroll; max-width: 900px; max-height: 30px;">{{ subpdo.detailed_data_src }}</td>
+              <td style="overflow: scroll; max-width: 900px; max-height: 30px;"><span>{{ subpdo.comments }}</span></td>
             </tr>
             <!-- End of row data -->
           {% endfor %}
 
-        {% endfor %}
+        {% endfor %}                
+        </tbody>
+
       </table>
   </div>
 
+  <script>
+    var entryWidth = document.querySelector('.entryh').offsetWidth;
+    document.querySelector('.entryd').style.width = entryWidth + 'px';
+  </script>
+  
 </section>
 {% endblock content %}

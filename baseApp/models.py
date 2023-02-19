@@ -98,7 +98,7 @@ class Pdo(models.Model):
 
 
 class Entry(models.Model):
-    value = models.DecimalField(max_digits=15, decimal_places=2, default=0, null=True, blank=True)
+    value = models.DecimalField(max_digits=9, decimal_places=2, default=0, null=True, blank=True)
     subpdo = models.ForeignKey('SubPDO', on_delete=models.CASCADE, related_name='entries')
     index = models.IntegerField()
 
@@ -125,6 +125,15 @@ class Entry(models.Model):
         verbose_name_plural = "Entries"
 
 
+class YearlyTarget(models.Model):
+    subpdo = models.ForeignKey('SubPDO', on_delete=models.CASCADE, related_name='targets')
+    yrly_target_index = models.PositiveIntegerField()
+    value = models.PositiveIntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.subpdo} Target for yr {self.yrly_target_index}"
+
+
 class SubPDO(models.Model):
     """
     Supposed to be PDO rather. Because every PDO is under an Indicator
@@ -147,26 +156,36 @@ class SubPDO(models.Model):
     pdo = models.ForeignKey(Pdo, related_name='subpdos', on_delete=models.CASCADE)
 
     baseline = models.IntegerField(default=1)
-    baselineyear = models.IntegerField()
-    actual_to_date = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    end_target = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
-    perc_complete = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+    baselineyear = models.IntegerField()    
+    end_target = models.DecimalField(decimal_places=2, max_digits=10, null=True)
     detailed_data_src = models.CharField(max_length=1000, null=True, blank=True)
     comments = models.CharField(max_length=1000, null=True, blank=True)
     subpdo_id = models.CharField(max_length=25, null=True, blank=True)
 
     def get_ATD(self):
-        return 6
-    
+        """Returns total work completed to date of a particular year"""
+
+        atd = 0
+        if self.classification == "Cummulative":
+            # for i in self.self.entries.all():
+            #     atd += i.value
+            pass
+        elif self.classification == "Number":
+            pass
+        elif self.classification == "Percentage":
+            pass
+        return atd
+
     def get_yrly_target(self):
         return 10
     
     def get_perc_comp(self):
+        """Calculates and returns percentage of project completed"""
         return 50
 
 
     def save(self, *args, **kwargs):
-        if not self.pk:
+        if not self.pk:            
             iden = f'{self.pdo.pdo_num}'
             pos = self.pdo.subpdos.count() + 1
             self.subpdo_id = f'PDO {iden}.{pos}'
@@ -175,14 +194,21 @@ class SubPDO(models.Model):
 
             project = self.pdo.project
             total_entries =  project.collection_freq.num_entries * project.project_years.count()
-            index = 1
-            for _ in range(total_entries):
-                Entry.objects.create(subpdo=self, index=index)
-                index += 1
+            entry_index = 1
+            yrly_target_index = 1
+            for i in range(1, total_entries+1):
+                Entry.objects.create(subpdo=self, index=entry_index)
+                entry_index += 1
+                
+                # If we've created all entries for a year, then create a yearly target
+                if i % project.project_years.first().collection_freq.num_entries == 0:
+                    YearlyTarget.objects.create(subpdo=self, yrly_target_index=yrly_target_index)
+                    yrly_target_index += 1
         else:
             super().save(*args, **kwargs)
 
     def get_entries_in_bages(self):
+        """Returns a list of list of entries. Returned entries are grouped accroding to year"""
         num_per_yr = self.pdo.project.collection_freq.num_entries
         iterator = self.entries.all().iterator()
         chunks = zip_longest(*([iterator] * num_per_yr))
@@ -197,9 +223,23 @@ class SubPDO(models.Model):
         return entries_in_bages
     
     def get_entries_with_respect_to_years(self):
+        """Returns the entry groups from get_entries_in_bages() but paired with their years"""
         years = self.pdo.project.project_years.all()
         entries_in_year_bages = self.get_entries_in_bages()        
-        return zip(entries_in_year_bages, years)
+        entries_in_year_bages = list(entries_in_year_bages) # change to a list
+
+        # Create a new entries_in_year_bages that has targets
+        entries_in_year_bages_with_targets = []                
+        for i, target in enumerate(self.targets.all()):
+            if i < len(entries_in_year_bages):
+                entries_bage = entries_in_year_bages[i]
+                entries_bage = list(entries_bage) # Change to a list so we can append obj of diff model
+                # Append yrly target value to the end of each year entries
+                entries_bage.append(target)
+                entries_in_year_bages_with_targets.append(entries_bage)
+        
+        val = zip(entries_in_year_bages_with_targets, years)
+        return val
 
     def __str__(self):
-        return f"{self.subpdo_id}"
+        return f"{self.pdo}: {self.subpdo_id}"

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.forms import inlineformset_factory
 from django.forms import BaseInlineFormSet
-from .models import CollectionFrequency, CustomUser, Pdo, Project, SubPDO, ProjectYear, Entry
+from .models import CollectionFrequency, CustomUser, Pdo, Project, SubPDO, ProjectYear, Entry, YearlyTarget
 from django.db.models import Q
 
 
@@ -31,14 +31,14 @@ class DeletableModelInlineFormset(BaseInlineFormSet):
 
 
 SubPDOFormSet = inlineformset_factory(Pdo, SubPDO, formset=DeletableModelInlineFormset, can_delete=True,
-fields=["result_level", "classification", "measurement_unit", "baseline", "baselineyear"]
+exclude = ["subpdo_id"]
 )
 PDOFormset = inlineformset_factory(Project, Pdo, fields=["name", "pdo_num"],
 formset=DeletableModelInlineFormset, can_delete=True
 )
 
 class SubPDOInline(admin.TabularInline):
-    fields=["result_level", "classification", "measurement_unit", "baseline", "baselineyear", "detailed_data_src", "comments"]
+    exclude = ["subpdo_id"]
     model = SubPDO
     formset = SubPDOFormSet
     extra = 0
@@ -53,10 +53,12 @@ class PDOInline(admin.TabularInline):
 class PDOAdmin(admin.ModelAdmin):
     inlines = [SubPDOInline]
 
+    # Save subpdos
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
+        count = 1
         for instance in instances:
-            instance.pdo = form.instance
+            instance.pdo = form.instance            
             instance.save()
         formset.save_m2m()
 
@@ -65,7 +67,7 @@ class ProjectAdmin(admin.ModelAdmin):
     inlines = [PDOInline]
     exclude = ["creator", "project_years"]
 
-    # Save pdos
+    # Save indicators
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
@@ -91,8 +93,9 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CustomUser)
+admin.site.register(CollectionFrequency)
+admin.site.register(Project, ProjectAdmin)
 admin.site.register(Pdo, PDOAdmin)
 admin.site.register(SubPDO)
 admin.site.register(Entry)
-admin.site.register(Project, ProjectAdmin)
-admin.site.register(CollectionFrequency)
+admin.site.register(YearlyTarget)

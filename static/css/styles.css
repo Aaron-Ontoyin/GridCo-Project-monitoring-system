@@ -20,7 +20,7 @@ a {
 }
 
 .project-card {
-    border-radius: 40px;    
+    border-radius: 40px;
     background-color: rgb(242, 243, 243);
 }
 
@@ -44,31 +44,31 @@ a {
 table {
     font-family:'Courier New', Courier, monospace;
     border-collapse: collapse;
-    width: max-content;
+    width: max-content;    
     overflow: scroll;
 }
 
 td,
 th {
-    border-bottom: 1px solid #dddddd;
-    text-align: left;
-    line-height: 40px;
-    padding-right: 40px;    
-}
-
-.nested-th {
-    border-top: 1px solid #dddddd;
-    padding-right: 15px;    
-}
-
-.nested-td {
-    border: none;    
+    border: 1px solid white;
+    text-align: left;    
 }
 
 th {
     background-color: #0a0909;
     color: azure;
+    padding-right: 100px;
 }
+
+tr {
+    width: 400px;
+    border: 1px solid white;
+}
+
+table.subtable tr {
+    width: max-content;
+}
+
 
 .group-label {
     text-align: center;
