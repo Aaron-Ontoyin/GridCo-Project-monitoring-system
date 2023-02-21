@@ -162,27 +162,27 @@ class SubPDO(models.Model):
     comments = models.CharField(max_length=1000, null=True, blank=True)
     subpdo_id = models.CharField(max_length=25, null=True, blank=True)
 
-    def get_ATD(self):
-        """Returns total work completed to date of a particular year"""
-
-        atd = 0
-        if self.classification == "Cummulative":
-            # for i in self.self.entries.all():
-            #     atd += i.value
-            pass
-        elif self.classification == "Number":
-            pass
-        elif self.classification == "Percentage":
-            pass
-        return atd
-
-    def get_yrly_target(self):
-        return 10
-    
     def get_perc_comp(self):
-        """Calculates and returns percentage of project completed"""
-        return 50
-
+        """Calculates and returns percentage of project years completed"""
+        
+        yearly_targets = list(self.targets.all())        
+        entries_into_years = self.get_entries_in_bages()
+        
+        # Add targets to the entries
+        entries_with_targets = []
+        idx = 0
+        for i in entries_into_years:
+            entries_with_targets.append([i] + [yearly_targets[idx]])
+            idx += 1
+        
+        perc_completed_list = []
+        for i in entries_with_targets: # Comes with target
+            yearly_target_value = i[-1].value
+            total = 0
+            for entry in i[:-2]: # Gets target off                
+                total += entry.value
+            per_c = total * 100 / yearly_target_value
+            perc_completed_list.append(round(per_c, 2))
 
     def save(self, *args, **kwargs):
         if not self.pk:            
@@ -208,7 +208,7 @@ class SubPDO(models.Model):
             super().save(*args, **kwargs)
 
     def get_entries_in_bages(self):
-        """Returns a list of list of entries. Returned entries are grouped accroding to year"""
+        """Returns a list of list of entries. Returned entries are grouped according to year"""
         num_per_yr = self.pdo.project.collection_freq.num_entries
         iterator = self.entries.all().iterator()
         chunks = zip_longest(*([iterator] * num_per_yr))
@@ -222,14 +222,13 @@ class SubPDO(models.Model):
 
         return entries_in_bages
     
-    def get_entries_with_respect_to_years(self):
-        """Returns the entry groups from get_entries_in_bages() but paired with their years"""
-        years = self.pdo.project.project_years.all()
+    def get_entries_in_bages_with_targets(self):
+        """Returns the entry groups from get_entries_in_bages() but paired with their years"""        
         entries_in_year_bages = self.get_entries_in_bages()        
         entries_in_year_bages = list(entries_in_year_bages) # change to a list
-
+        
         # Create a new entries_in_year_bages that has targets
-        entries_in_year_bages_with_targets = []                
+        entries_in_year_bages_with_targets = []
         for i, target in enumerate(self.targets.all()):
             if i < len(entries_in_year_bages):
                 entries_bage = entries_in_year_bages[i]
@@ -238,8 +237,57 @@ class SubPDO(models.Model):
                 entries_bage.append(target)
                 entries_in_year_bages_with_targets.append(entries_bage)
         
-        val = zip(entries_in_year_bages_with_targets, years)
-        return val
+        return entries_in_year_bages_with_targets
+
+    def get_entries_in_bages_with_targets_and_atd(self):
+        entries_in_bages_with_targets = self.get_entries_in_bages_with_targets()
+        entries_in_bages_with_targets_and_atd = []
+        for i in entries_in_bages_with_targets:
+            entries_in_bages_with_targets_and_atd.append(i + [0])        
+        
+        return entries_in_bages_with_targets_and_atd;
+
+    def get_entries_in_bages_with_targets_atd_and_pc(self):
+        """ Add percentage completed to each list[grouped into yearly]"""
+        entries_in_bages_with_targets_and_atd = self.get_entries_in_bages_with_targets_and_atd()
+        entries_in_bages_with_targets_atd_and_pc = []
+
+        # Add the percentage completed to each list
+        for i in entries_in_bages_with_targets_and_atd:
+            # Get the target which is the second but last in each list
+            target_val = i[-2].value
+            # Get the sum of all entries in each list. Last two in the list aren't part
+            # because they are the yt and atd
+            total_entries_val = 0
+            for entry in i[:-2]:
+                total_entries_val += entry.value
+            
+            perc_comp = total_entries_val * 100 / target_val
+            perc_comp = round(perc_comp, 2)
+            # Add zero infront if num is less than 10
+            if perc_comp < 10.0:
+                perc_comp = f"0{perc_comp}"
+            entries_in_bages_with_targets_atd_and_pc.append(i + [perc_comp])
+
+        return entries_in_bages_with_targets_atd_and_pc
+
+    def get_all_yrs_with_values(self):
+        """ 
+        Returns all years with all values in each year in a list 
+        including yt, atd, pc all indexed correctly 
+        """
+        # years = self.pdo.project.project_years.all()
+        all_values_per_yr = self.get_entries_in_bages_with_targets_atd_and_pc()
+        # entries_per_yr = years.first().collection_freq.num_entries
+        # total_entries_per_yr = entries_per_yr + 3 # 3 for the yt, atd, and pc
+        # all_values_per_yr = []
+        
+        print('\n' * 2)
+        print(all_values_per_yr)
+        print('\n' * 2)
+
+        return all_values_per_yr
+        
 
     def __str__(self):
-        return f"{self.pdo}: {self.subpdo_id}"
+        return f"{self.subpdo_id}"

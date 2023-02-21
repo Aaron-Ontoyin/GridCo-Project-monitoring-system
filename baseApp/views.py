@@ -69,14 +69,11 @@ class ProjectView(LoginRequiredMixin, DetailView):
         context['project_years'] = self.get_object().project_years.all()
         context['editable'] = True if self.request.user in self.get_object().reporters.all() else False
         return context
-    
-    def post(self, request, *args, **kwargs):        
+
+    def post(self, request, *args, **kwargs):
         form = request.POST
         entry = Entry.objects.get(pk=form.get('entry_pk'))
         entry.value = form.get('entry_value')
         entry.save()
 
         return redirect('project', pk=self.get_object().pk)
-
-
-        

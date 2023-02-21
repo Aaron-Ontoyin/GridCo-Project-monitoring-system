@@ -36,9 +36,9 @@
                     <th class="entryh">{{entry}}</th>
                   {% endfor %}
                   
-                  <th><span title="Yearly Target">YT</span></th>
-                  <th><span title="Year {{year.year_num}} Actual to Date">Yr{{year.year_num}} ATD</span></th>
-                  <th><span title="Percent Completed">PC</th></span>
+                  <th class="yth" title="Yearly Target">YT</th>
+                  <th class="atdh" title="Year {{year.year_num}} Actual to Date">Yr{{year.year_num}} ATD</th>
+                  <th class="pch" title="Percent Completed">PC</th>
                 </tr>
               </table>
 
@@ -78,31 +78,45 @@
               <td>{{ subpdo.baselineyear }}</td>
               
               <!-- Project years -->
-              {% for entries_in_a_yr in subpdo.get_entries_with_respect_to_years %}
+              {% for entries in subpdo.get_all_yrs_with_values %}
               <td> 
-
                 <table class="w-100" class="subtable">
                   <tr>
+
                     <!-- This is the set of entries -->
-                    {% for entry in entries_in_a_yr.0 %}                    
-                        
-                      {% if editable and not entry.yrly_target_index %} <!-- if editable and not yearly target -->
-                        <td style="background-color: aliceblue;"
+                    <div class="d-flex w-100">
+                    {% for entry in entries %}
+
+                      <!-- if editable and isn't yearly target or atd or pc: then it's a normal entry -->
+                      <!-- Note that pc and atd do not have subpdo -->
+                      {% if editable and entry.subpdo and not entry.yrly_target_index %}
+
+                        <div style="background-color: aliceblue;"
                           data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}{{yr.year_num}}{{entry.pk}}"
                           class="entryd"
                         >
                         {{entry.value}}
-                        </td>
+                        </div>
                         <!-- modal -->
                         {% include 'baseApp/update_entry_modal.html' %}
+
+                      {% elif entry.subpdo and not entry.yrly_target_index %}
+                        <!-- Normal entry but not editable -->
+                        <div class="entryd">{{entry.value}}</div>
+                      {% elif entry.yrly_target_index %}
+                        <!-- It's a target index -->
+                        <div class="ytd">{{entry.value}}</div>
+                      {% elif entry < 1 %}
+                        <!-- It's actual to date -->
+                        <div class="atdd">{{ entry }}</div>
                       {% else %}
-                        <!-- This is a yearly target -->
-                        <td style="width: 125px;">{{entry.value}}</td>
+                        <!-- It's percent complete -->
+                        <div class="pcd">{{ entry }}%</div>
                       {% endif %}
-                      
+
                     {% endfor %}
-                    <td style="width: 165px;">{{ subpdo.get_ATD }}</td>
-                    <td style="width: 120px;">{{ subpdo.get_perc_comp }}</td>
+                    </div>
+                    
                   </tr>
                 </table>
               </td>
@@ -135,8 +149,30 @@
 
   <script>
     var entryWidth = document.querySelector('.entryh').offsetWidth;
-    document.querySelector('.entryd').style.width = entryWidth + 'px';
+    var entries = document.querySelectorAll('.entryd');
+    for (var i = 0; i < entries.length; i++) {
+      entries[i].style.width = entryWidth + 'px';
+    }
+
+    var ytWidth = document.querySelector('.yth').offsetWidth;
+    var ytds = document.querySelectorAll('.ytd');
+    for (var i = 0; i < ytds.length; i++) {
+      ytds[i].style.width = ytWidth + 'px';
+    }
+
+    var atdWidth = document.querySelector('.atdh').offsetWidth;
+    var atds = document.querySelectorAll('.atdd');
+    for (var i = 0; i < atds.length; i++) {
+      atds[i].style.width = atdWidth + 'px'
+    }
+
+    var pcWidth = document.querySelector('.pch').offsetWidth;
+    var pcs = document.querySelectorAll('.pcd');
+    for (var i = 0; i < pcs.length; i++) {
+      pcs[i].style.width = pcWidth + 'px';
+    }
   </script>
   
 </section>
+
 {% endblock content %}
