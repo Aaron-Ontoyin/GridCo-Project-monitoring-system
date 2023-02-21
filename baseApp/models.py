@@ -98,7 +98,7 @@ class Pdo(models.Model):
 
 
 class Entry(models.Model):
-    value = models.DecimalField(max_digits=9, decimal_places=2, default=0, null=True, blank=True)
+    value = models.DecimalField(max_digits=9, decimal_places=1, default=0, null=True, blank=True)
     subpdo = models.ForeignKey('SubPDO', on_delete=models.CASCADE, related_name='entries')
     index = models.IntegerField()
 
@@ -157,7 +157,7 @@ class SubPDO(models.Model):
 
     baseline = models.IntegerField(default=1)
     baselineyear = models.IntegerField()    
-    end_target = models.DecimalField(decimal_places=2, max_digits=10, null=True)
+    end_target = models.DecimalField(decimal_places=1, max_digits=10, null=True)
     detailed_data_src = models.CharField(max_length=1000, null=True, blank=True)
     comments = models.CharField(max_length=1000, null=True, blank=True)
     subpdo_id = models.CharField(max_length=25, null=True, blank=True)
@@ -233,17 +233,29 @@ class SubPDO(models.Model):
             if i < len(entries_in_year_bages):
                 entries_bage = entries_in_year_bages[i]
                 entries_bage = list(entries_bage) # Change to a list so we can append obj of diff model
-                # Append yrly target value to the end of each year entries
-                entries_bage.append(target)
+                # Append yrly target value to the end of each year entries                
+                entries_bage.append(target.value)
                 entries_in_year_bages_with_targets.append(entries_bage)
         
         return entries_in_year_bages_with_targets
 
     def get_entries_in_bages_with_targets_and_atd(self):
+        """ Takes entries with targets and adds appropriate target actual to date """
         entries_in_bages_with_targets = self.get_entries_in_bages_with_targets()
         entries_in_bages_with_targets_and_atd = []
         for i in entries_in_bages_with_targets:
-            entries_in_bages_with_targets_and_atd.append(i + [0])        
+            atd = 0
+            entries = i[:-1] # remove targets
+            if self.classification == "Cummulative":
+                for el in entries[::-1]: # So we can loop starting from the last
+                    if el.value > 0:
+                        atd = el.value
+                        break # Take most last non 0 number; remain 0 if none
+            else: # Number and percentage are the same
+                entries = i[:-1]
+                for el in entries:
+                    atd += el.value # Add all entries
+            entries_in_bages_with_targets_and_atd.append(i + [atd])            
         
         return entries_in_bages_with_targets_and_atd;
 
@@ -253,17 +265,25 @@ class SubPDO(models.Model):
         entries_in_bages_with_targets_atd_and_pc = []
 
         # Add the percentage completed to each list
-        for i in entries_in_bages_with_targets_and_atd:
+        for i in entries_in_bages_with_targets_and_atd:            
             # Get the target which is the second but last in each list
-            target_val = i[-2].value
+            target_val = i[-2]
             # Get the sum of all entries in each list. Last two in the list aren't part
             # because they are the yt and atd
             total_entries_val = 0
-            for entry in i[:-2]:
-                total_entries_val += entry.value
-            
-            perc_comp = total_entries_val * 100 / target_val
-            perc_comp = round(perc_comp, 2)
+            if self.classification == "Cummulative":
+                # Take the last non 0 entry. If no non 0, then continue to be 0
+                entries = i[:-2]
+                for el in entries[::-1]: # So we can loop starting from the last
+                    if el.value > 0:
+                        total_entries_val = el.value
+                        break
+            else: # Percentage and number works the same
+                for entry in i[:-2]:
+                    total_entries_val += entry.value
+                                
+            perc_comp = float(total_entries_val) * 100 / target_val
+            perc_comp = round(perc_comp, 1)            
             # Add zero infront if num is less than 10
             if perc_comp < 10.0:
                 perc_comp = f"0{perc_comp}"
@@ -275,19 +295,8 @@ class SubPDO(models.Model):
         """ 
         Returns all years with all values in each year in a list 
         including yt, atd, pc all indexed correctly 
-        """
-        # years = self.pdo.project.project_years.all()
-        all_values_per_yr = self.get_entries_in_bages_with_targets_atd_and_pc()
-        # entries_per_yr = years.first().collection_freq.num_entries
-        # total_entries_per_yr = entries_per_yr + 3 # 3 for the yt, atd, and pc
-        # all_values_per_yr = []
-        
-        print('\n' * 2)
-        print(all_values_per_yr)
-        print('\n' * 2)
-
-        return all_values_per_yr
-        
+        """        
+        return self.get_entries_in_bages_with_targets_atd_and_pc()
 
     def __str__(self):
         return f"{self.subpdo_id}"

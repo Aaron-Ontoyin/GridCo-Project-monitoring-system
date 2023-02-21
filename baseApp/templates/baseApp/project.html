@@ -85,36 +85,40 @@
 
                     <!-- This is the set of entries -->
                     <div class="d-flex w-100">
-                    {% for entry in entries %}
-
-                      <!-- if editable and isn't yearly target or atd or pc: then it's a normal entry -->
-                      <!-- Note that pc and atd do not have subpdo -->
-                      {% if editable and entry.subpdo and not entry.yrly_target_index %}
+                    {% for entry in entries|slice:"0:-3" %}
+                      
+                      {% if editable %}
 
                         <div style="background-color: aliceblue;"
                           data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}{{yr.year_num}}{{entry.pk}}"
                           class="entryd"
                         >
-                        {{entry.value}}
+                        {{entry.value}}{% if subpdo.classification == "Percentage" %}%{% endif %}
                         </div>
                         <!-- modal -->
                         {% include 'baseApp/update_entry_modal.html' %}
 
-                      {% elif entry.subpdo and not entry.yrly_target_index %}
-                        <!-- Normal entry but not editable -->
-                        <div class="entryd">{{entry.value}}</div>
-                      {% elif entry.yrly_target_index %}
-                        <!-- It's a target index -->
-                        <div class="ytd">{{entry.value}}</div>
-                      {% elif entry < 1 %}
-                        <!-- It's actual to date -->
-                        <div class="atdd">{{ entry }}</div>
                       {% else %}
-                        <!-- It's percent complete -->
-                        <div class="pcd">{{ entry }}%</div>
+                        <!-- Normal entry but not editable -->                                          
+                        <div class="entryd">
+                          {{entry.value}}{% if subpdo.classification == "Percentage" %}%{% endif %}
+                        </div>
                       {% endif %}
 
                     {% endfor %}
+                    <!-- Target index -->
+                    {% with t=entries|slice:"-3:-2" %}
+                    <div class="ytd">{{ t.0 }}{% if subpdo.classification == "Percentage" %}%{% endif %}</div>
+                    {% endwith %}
+                    
+                    <!-- Actual to date -->
+                    {% with atd=entries|slice:"-2:-1" %}
+                    <div class="atdd">{{ atd.0 }}{% if subpdo.classification == "Percentage" %}%{% endif %}</div>
+                    {% endwith %}
+                    
+                    <!-- Percent complete -->                    
+                    <div class="pcd">{{ entries|last }}%</div>                    
+
                     </div>
                     
                   </tr>
@@ -127,7 +131,7 @@
               <td>
                 <table class="w-100">
                   <tr>
-                    <td class="nested-td">F11</td>
+                    <td class="nested-td">{{ subpdo.end_target }}</td>
                     <td class="nested-td">F22</td>
                     <td class="nested-td">F33</td>
                   </tr>                
