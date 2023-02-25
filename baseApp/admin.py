@@ -31,14 +31,14 @@ class DeletableModelInlineFormset(BaseInlineFormSet):
 
 
 SubPDOFormSet = inlineformset_factory(Pdo, SubPDO, formset=DeletableModelInlineFormset, can_delete=True,
-exclude = ["subpdo_id"]
+exclude = ["subpdo_id", "detailed_data_src", "comments"]
 )
 PDOFormset = inlineformset_factory(Project, Pdo, fields=["name", "pdo_num"],
 formset=DeletableModelInlineFormset, can_delete=True
 )
 
 class SubPDOInline(admin.TabularInline):
-    exclude = ["subpdo_id"]
+    exclude = ["subpdo_id", "detailed_data_src", "comments"]
     model = SubPDO
     formset = SubPDOFormSet
     extra = 0

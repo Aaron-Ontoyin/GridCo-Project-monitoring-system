@@ -161,28 +161,44 @@ class SubPDO(models.Model):
     detailed_data_src = models.CharField(max_length=1000, null=True, blank=True)
     comments = models.CharField(max_length=1000, null=True, blank=True)
     subpdo_id = models.CharField(max_length=25, null=True, blank=True)
+    
+    def get_end_target(self):
+        """ Returns end_taget as a string. Adds 0 in front incase it's below 10 """
+        t = self.end_target
+        t = f"0{t}" if t < 10 else f"{t}"
+        return t
+
+    def get_atd(self):
+        entries_in_bages_with_targets = self.get_entries_in_bages()
+        
+        atd = 0
+        if self.classification == "Cummulative":
+            last_year_entries = entries_in_bages_with_targets[-1]
+            last_entry = last_year_entries.last()
+            atd = last_entry.value        
+        else: # It's percentage or number
+            for i in entries_in_bages_with_targets:
+                for entry in i:
+                    atd += entry.value
+    
+        return atd
 
     def get_perc_comp(self):
         """Calculates and returns percentage of project years completed"""
-        
-        yearly_targets = list(self.targets.all())        
-        entries_into_years = self.get_entries_in_bages()
-        
-        # Add targets to the entries
-        entries_with_targets = []
-        idx = 0
-        for i in entries_into_years:
-            entries_with_targets.append([i] + [yearly_targets[idx]])
-            idx += 1
-        
-        perc_completed_list = []
-        for i in entries_with_targets: # Comes with target
-            yearly_target_value = i[-1].value
-            total = 0
-            for entry in i[:-2]: # Gets target off                
-                total += entry.value
-            per_c = total * 100 / yearly_target_value
-            perc_completed_list.append(round(per_c, 2))
+
+        if self.classification == "Percentage":
+            return self.get_atd()
+
+        target = self.end_target
+        recent_value = self.get_atd()
+        try:
+            perc_comp = recent_value * 100 / target
+        except ZeroDivisionError:
+            # If target isn't defined or 0, then we're 100% done
+            return 100
+
+        perc_comp = round(perc_comp, 2)
+        return perc_comp
 
     def save(self, *args, **kwargs):
         if not self.pk:            
@@ -300,3 +316,6 @@ class SubPDO(models.Model):
 
     def __str__(self):
         return f"{self.subpdo_id}"
+
+    class Meta:
+        verbose_name_plural = "Project Development objectives"

@@ -131,16 +131,35 @@
               <td>
                 <table class="w-100">
                   <tr>
-                    <td class="nested-td">{{ subpdo.end_target }}</td>
-                    <td class="nested-td">F22</td>
-                    <td class="nested-td">F33</td>
+                    <td class="text-center">{{ subpdo.get_end_target }}</td>
+                    <td class="text-center">{{ subpdo.get_atd }}{% if subpdo.classification == "Percentage" %}%{% endif %}</td>
+                    <td class="text-center">{{ subpdo.get_perc_comp }}%</td>
                   </tr>                
                 </table>
               </td>          
               <!-- End of project progress -->
+              
+              {% if editable %}
+                <td style="overflow: scroll; max-width: 900px; max-height: 30px; background-color: aliceblue;"
+                  data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}datasrc"
+                >
+                  {{ subpdo.detailed_data_src }}
+                </td>
+                <!-- modal -->
+                {% include 'baseApp/datasrc_modal.html' %}
 
-              <td style="overflow: scroll; max-width: 900px; max-height: 30px;">{{ subpdo.detailed_data_src }}</td>
-              <td style="overflow: scroll; max-width: 900px; max-height: 30px;"><span>{{ subpdo.comments }}</span></td>
+                <td style="overflow: scroll; max-width: 900px; max-height: 15px; background-color: aliceblue;"
+                data-toggle="modal" data-target="#subPDOModal{{subpdo.pk}}comment"
+                >
+                  {{ subpdo.comments }}
+                </td>
+                <!-- modal -->
+                {% include 'baseApp/comment_modal.html' %}
+              {% else %}
+                <td style="overflow: scroll; max-width: 900px; max-height: 30px;">{{ subpdo.detailed_data_src }}</td>
+                <td style="overflow: scroll; max-width: 900px; max-height: 30px;"><span>{{ subpdo.comments }}</span></td>
+              {% endif %}
+
             </tr>
             <!-- End of row data -->
           {% endfor %}

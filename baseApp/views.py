@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
 
-from .models import Project, Entry
+from .models import Project, Entry, SubPDO
 
 
 class IndexView(LoginRequiredMixin, ListView):
@@ -39,7 +39,7 @@ class LoginView(View):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-            
+
             if user is not None:
                 login(request, user)
                 messages.info(request, f"Welcome {request.user.username}")
@@ -71,9 +71,17 @@ class ProjectView(LoginRequiredMixin, DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = request.POST
-        entry = Entry.objects.get(pk=form.get('entry_pk'))
-        entry.value = form.get('entry_value')
-        entry.save()
+        form = request.POST        
+        if form.get('entry_pk'):
+            entry = Entry.objects.get(pk=form.get('entry_pk'))
+            entry.value = form.get('entry_value')
+            entry.save()
+        else:
+            subpdo = SubPDO.objects.get(pk=form.get('subpdo_pk'))            
+            if form.get('comment'):
+                subpdo.comments = form.get('comment')
+            else:
+                subpdo.detailed_data_src = form.get('data_src')
+            subpdo.save()
 
         return redirect('project', pk=self.get_object().pk)

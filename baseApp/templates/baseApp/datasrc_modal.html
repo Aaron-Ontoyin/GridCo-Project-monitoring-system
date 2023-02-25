@@ -1,0 +1,31 @@
+<form action="" method="POST">
+    {% csrf_token %}
+
+    <div class="modal fade text-dark" id="subPDOModal{{subpdo.pk}}datasrc" tabindex="-1" role="dialog" aria-labelledby="subPDOEntryModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="subPDOModalLongTitle{{subpdo.pk}}datasrc" style="font-family: 'Times New Roman', Times, serif;">
+                Updating... <br>
+                Data Source of {{ subpdo.pdo }} {{ subpdo }}
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+
+            <div class="modal-body">        
+                <div class="form-group my-1 d-flex mx-5 justify-content-around">                
+                    <textarea rows="5" cols="60" name="data_src" style="border-radius: 10px;">{{ subpdo.detailed_data_src }}</textarea>
+                    <input type="hidden" name="subpdo_pk" value="{{subpdo.pk}}">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
