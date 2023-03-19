@@ -1,8 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.shortcuts import render
+from django.db.models import Count
+
+import pandas as pd
 
 from datetime import date, timedelta
 from itertools import zip_longest
+
+import plotly.graph_objs as go
+import plotly.offline as opy
+import plotly.express as px
+from plotly.subplots import make_subplots
+
 
 RESULT_LEVEL_CHOICES = [
     ('Output','Output'),
@@ -68,11 +78,73 @@ class Project(models.Model):
         return entries
 
     def perc_completed(self):
-        return 15
+        subpdos = SubPDO.objects.filter(pdo__project=self)
+        compls  = [i.get_perc_comp() for i in subpdos]        
+        try:
+            perc_complete = sum(compls) / len(compls)
+        except ZeroDivisionError:
+            return round(100.0, 2)
+        return round(perc_complete, 2)
 
     def all_years_fill(self):
         return (self.collection_freq.value + 3) * self.duration
-    
+
+    def indicators_graph(self):
+        """
+        Plots indicators verses percent completed
+        """
+        pdos = self.pdos.all()        
+        fig = go.Figure(data=[go.Bar(
+            x=[f'{pdo.name}' for pdo in pdos],
+            y=[pdo.get_perc_comp() for pdo in pdos]
+        )])
+        fig.update_layout(title_text='Project Indicators', xaxis_tickangle=-45)
+        
+        plot_div = opy.plot(fig, auto_open=False, output_type='div')
+        return plot_div
+
+    def all_subpdos_graph(self):
+        pdos = self.pdos.all()
+        fig = make_subplots(rows=1, cols=1)
+        for pdo in pdos: 
+            trace = go.Bar(x=[subpdo.subpdo_id for subpdo in pdo.subpdos.all()],
+                        y=[subpdo.get_perc_comp() for subpdo in pdo.subpdos.all()],
+                        name=f'{pdo.name}'
+                    )
+            fig.add_trace(trace, row=1, col=1)
+            
+        fig.update_layout(title='Indicators Charts')
+        fig.update_xaxes(title_text='PDOs')
+        fig.update_yaxes(title_text='Percent Completed (%)')
+
+        plot_div = opy.plot(fig, auto_open=False, output_type='div')
+        return plot_div
+
+    def indicators_subplot_graph(self):
+        pdos = self.pdos.all()
+        num_pdos = pdos.count()
+        fig = make_subplots(rows=int((num_pdos/3 if num_pdos%3 == 0 else num_pdos/3 + 1)), cols=3)
+        col = row = 1
+        for i, pdo in enumerate(pdos):
+            trace = go.Bar(x=[subpdo.subpdo_id for subpdo in pdo.subpdos.all()],
+                        y=[subpdo.get_perc_comp() for subpdo in pdo.subpdos.all()],
+                        name=f'{pdo.name}'
+                    )
+
+            fig.add_trace(trace, row=row, col=col)
+            # 3 x 3 grid. An algorithm to change the row col numbers
+            if i in [3*x for x in range(1, 1000)]:
+                row += 1
+            else:
+                col += 1
+
+        fig.update_layout(title='Indicators Charts')
+        fig.update_xaxes(title_text='PDOs')
+        fig.update_yaxes(title_text='Percent Completed (%)')
+
+        plot_div = opy.plot(fig, auto_open=False, output_type='div')
+        return plot_div
+
     def __str__(self):
         return self.name
 
@@ -83,6 +155,15 @@ class Pdo(models.Model):
     name = models.CharField(max_length=250)
     pdo_num = models.IntegerField()
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="pdos")
+
+    def get_perc_comp(self):
+        subpdos = self.subpdos.all()
+        perc_comps = [subpdo.get_perc_comp() for subpdo in subpdos]
+        try:
+            val = sum(perc_comps) / len(perc_comps)
+        except ZeroDivisionError:
+            val = 100.0
+        return round(val, 2)
 
     def __str__(self):
         return f"{self.project}: {self.name}"

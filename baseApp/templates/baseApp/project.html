@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 
 {% block content %}
-<section class="vh-100">  
+<section>  
 
   <div class="shadow-sm p-2 m-2">
     <h1>{{project.name}}</h1>
@@ -64,7 +64,7 @@
         {% for pdo in project.pdos.all %}
           <!-- Group Header -->
           <tr>
-            <td colspan="12" class="group-label" style="text-align: left; padding-left: 10px;">Indicator {{pdo.pdo_num}}: {{pdo.name}}</td>
+            <td colspan="12" class="group-label" style="text-align: left; padding-left: 10px;">Indicator {{pdo.pdo_num}}: {{pdo.name}} - {{pdo.get_perc_comp}} % complete</td>
           </tr>
           
           <!-- Row data -->
@@ -168,6 +168,59 @@
         </tbody>
 
       </table>
+  </div>
+  <div class="stats-title mt-5 p-4" style="font-size: xx-large;">
+    STATISTICS
+  </div>
+
+  <div class="stats bg-light shadow m-2 p-3">
+    <div class="">
+      Completed:
+      <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{{project.perc_completed}}" aria-valuemin="0" aria-valuemax="100" style="width: {{project.perc_completed}}%">{{project.perc_completed}} %</div>
+      </div>
+    </div>
+
+    <div class="progress-stats mt-3">
+
+      <div class="text-center">
+        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#indicators" aria-expanded="false" aria-controls="content1">Show/Hide Indicators Graph</button>
+          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#all_subpdos" aria-expanded="false" aria-controls="content2">Show/Hide All PDOs Graph</button>
+          <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#indicators_subplots" aria-expanded="false" aria-controls="content2">Show/Hide Indicators Subplots</button>
+        </div>
+
+        <!-- Content to show/hide -->
+        <div class="collapse" id="indicators">
+          <div class="card card-body bg-light">
+            <div class="main-progess p-4 text-center">
+              {{ project.indicators_graph|safe}}
+            </div>
+          </div>
+        </div>
+        <div class="collapse" id="all_subpdos">
+          <div class="card card-body bg-light">
+            <div class="main-progess p-4 text-center">
+              {{ project.indicators_subplot_graph|safe}}
+            </div>
+          </div>
+        </div>
+        <div class="collapse" id="indicators_subplots">
+          <div class="card card-body bg-light">
+            <div class="main-progess p-4 text-center">
+              {{ project.all_subpdos_graph|safe}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-progress shadow-sm p-3 m-3" style="background-color: aliceblue; border-radius: 10px;">
+        Sub
+      </div>
+    </div>
+        
+  </div>
+
   </div>
 
   <script>
