@@ -31,8 +31,7 @@ CLASSIFICATION_CHOICES = [
 
 
 class CustomUser(AbstractUser):
-    user_id = models.CharField(max_length=7)
-    is_admin = models.BooleanField(default=False)    
+    user_id = models.CharField(max_length=7)    
     def __str__(self):
         return self.username
 
@@ -60,13 +59,14 @@ class ProjectYear(models.Model):
 
 
 class Project(models.Model):
-    creator = models.ForeignKey(CustomUser, related_name='creator', 
+    creator = models.ForeignKey(CustomUser, related_name='created_projects', 
     null=True, blank=True, on_delete=models.SET_NULL)
     project_years = models.ManyToManyField(ProjectYear, related_name="projects", blank=True)
     name = models.CharField(max_length=250)
     duration = models.PositiveIntegerField()
     genPDO = models.CharField(max_length=1000)
     reporters = models.ManyToManyField(CustomUser, related_name='editing_projects', blank=True)
+    only_viewers = models.ManyToManyField(CustomUser, related_name='view_only', blank=True)
     # Shares same collection freq with project years that are related to it
     collection_freq = models.ForeignKey(CollectionFrequency, on_delete=models.SET_NULL,
     null=True, related_name='projects', blank=True)
@@ -123,7 +123,9 @@ class Project(models.Model):
     def indicators_subplot_graph(self):
         pdos = self.pdos.all()
         num_pdos = pdos.count()
-        fig = make_subplots(rows=int((num_pdos/3 if num_pdos%3 == 0 else num_pdos/3 + 1)), cols=3)
+        rows = int((num_pdos/3 if num_pdos%3 == 0 else num_pdos/3 + 1)) if num_pdos else 1
+        cols = num_pdos if num_pdos in (1, 2) else 3
+        fig = make_subplots(rows=rows, cols=cols)
         col = row = 1
         for i, pdo in enumerate(pdos):
             trace = go.Bar(x=[subpdo.subpdo_id for subpdo in pdo.subpdos.all()],

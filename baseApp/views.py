@@ -10,6 +10,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
 
+from django.db.models import Q
+
 from .models import Project, Entry, SubPDO
 
 
@@ -17,6 +19,28 @@ class IndexView(LoginRequiredMixin, ListView):
     model = Project
     context_object_name = 'projects'
     template_name = 'baseApp/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        q = self.request.GET.get('searched_project')
+        projects = Project.objects.filter(
+            Q(only_viewers__in=[self.request.user]) |
+            Q(reporters__in=[self.request.user]) |
+            Q(creator=self.request.user)
+        )
+
+        if q is not None:
+            projects = projects.filter(
+                Q(name__icontains=q) |
+                Q(duration__icontains=q) |
+                Q(creator__username__icontains=q) |
+                Q(genPDO__icontains=q)
+            )            
+            if len(projects) == 0:
+                messages.info(self.request, "Project not found. Search projects by name, creater's name or PDO")
+
+        context['projects'] = projects[:10]
+        return context
 
 
 class LoginView(View):
@@ -62,22 +86,34 @@ class ProjectView(LoginRequiredMixin, DetailView):
     context_object_name = 'project'
     template_name = 'baseApp/project.html'
 
+    def get(self, request, *args, **kwargs):
+        project = self.get_object()        
+        self.object = project
+        user = request.user
+        allowed_viewers = project.reporters.all() | project.only_viewers.all()
+        if project.creator == user or user in allowed_viewers:
+            context = self.get_context_data(**kwargs)
+            return self.render_to_response(context)
+        else:
+            raise Http404("You are not authorized to view this project.")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['year_entries'] = self.get_object().get_year_entries()
-        context['entries_in_a_year'] = self.get_object().collection_freq.num_entries
-        context['project_years'] = self.get_object().project_years.all()
-        context['editable'] = True if self.request.user in self.get_object().reporters.all() else False
+        project = self.get_object()
+        context['year_entries'] = project.get_year_entries()
+        context['entries_in_a_year'] = project.collection_freq.num_entries
+        context['project_years'] = project.project_years.all()
+        context['editable'] = True if self.request.user in project.reporters.all() else False
         return context
 
     def post(self, request, *args, **kwargs):
-        form = request.POST        
+        form = request.POST
         if form.get('entry_pk'):
             entry = Entry.objects.get(pk=form.get('entry_pk'))
             entry.value = form.get('entry_value')
             entry.save()
         else:
-            subpdo = SubPDO.objects.get(pk=form.get('subpdo_pk'))            
+            subpdo = SubPDO.objects.get(pk=form.get('subpdo_pk'))
             if form.get('comment'):
                 subpdo.comments = form.get('comment')
             else:

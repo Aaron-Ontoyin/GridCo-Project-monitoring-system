@@ -3,13 +3,14 @@
 {% block content %}
 <section class="custom-bg-image vh-100" style="background-image: url({% static '/images/elec2.jpg' %});">
     <div class="search-btn input-group">
-        <input type="search" class="form-control rounded mt-3" placeholder="Search Projects" aria-label="Search"
-            aria-describedby="search-addon" />
-        <button type="button" class="btn btn-primary mt-3">search</button>
+        <!-- Search Bar -->
+        <form action="{% url 'index' %}" method="GET">
+            <input type="search" class="search-projects form-control rounded mt-3 mx-2" placeholder="Search Projects" name="searched_project" aria-label="Search" aria-describedby="search-addon">
+        </form>        
     </div>
 
-    <div class="title-projects shadow rounded mt-4 p-3">
-        <h2 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">PROJECTS</h2>
+    <div class="title-projects shadow mt-4 p-3">
+        <h2>PROJECTS</h2>
     </div>
 
     <div class="projects-container shadow mt-3 m-2 pt-lg-1 p-lg-5 p-3">

@@ -5,6 +5,10 @@
 
 .title-projects {
     width: fit-content;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;        
+    background-color: rgba(240, 240, 240, 0.4);
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
 
 a {
@@ -25,13 +29,8 @@ a {
 }
 
 .project-card:hover {
-    border: 1px solid whitesmoke;
+    border: 1px solid whitesmoke;    
 }
-
-.search-btn {
-    width: 40%;
-}
-
 
 .project-card-footer {
     color: rgb(114, 112, 112);
@@ -92,6 +91,10 @@ table.subtable tr {
 @media screen and (min-width: 1024px) {
     .progress {
         width: 30%;
+    }
+
+    .search-projects {
+        width: 40vw;
     }
 }
     
