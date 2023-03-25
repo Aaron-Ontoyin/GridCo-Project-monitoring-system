@@ -44,25 +44,82 @@
                   class="d-inline-block align-text-top"
                 />        
               </a>
-        </div>
-        <div class="name-title">
-            <h3>Project Monitoring system</h3>
-        </div>
-        
+        </div> 
+
         {% if request.user.is_authenticated %}
         <div>
-          <a href="{% url 'logout' %}">Logout</a>
+          <a href="{% url 'profile' request.user.id %}">My Profile</a>/
+          <a data-toggle="modal" href="#logoutModal">Logout</a>
         </div>
         {% endif %}
         
     </div>
     </nav>
 
-    <main style="height: fit-content;">
-        {% block content %}
+    <main>
+        {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-{{message.tags}} d-flex alert-dismissible fade show" role="alert" data-mdb-container="all-container">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+          {% endfor %}
+        {% endif %}   
         
-        {% endblock content %}
+        {% if form.errors %}
+          {% for field in form %}
+              {% for error in field.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" data-mdb-container="all-container">
+                  {{error|escape}}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              {% endfor %}
+          {% endfor %}
+
+          {% for error in form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" data-mdb-container="all-container">
+              {{error|escape}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}  
+      <div class="name-title text-center">
+        <h3>Project Monitoring system</h3>
+      </div>
+      <div class="min-vh-100 py-4">
+
+      {% block content %}
+      
+      
+      {% endblock content %}
+      </div>
     </main>
+    <!-- Sign Out Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="logoutModalLabel">Logout</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to Logout?  
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger"><a class="text-light" href="{% url 'logout' %}">Logout</a></button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <footer class="page-footer font-small py-5">
         <div class="footer-copyright text-light text-center">© 2023 Copyright:

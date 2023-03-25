@@ -31,7 +31,8 @@ CLASSIFICATION_CHOICES = [
 
 
 class CustomUser(AbstractUser):
-    user_id = models.CharField(max_length=7)    
+    user_id = models.CharField(max_length=7)
+    # photo = models.ImageField()
     def __str__(self):
         return self.username
 
@@ -66,7 +67,7 @@ class Project(models.Model):
     duration = models.PositiveIntegerField()
     genPDO = models.CharField(max_length=1000)
     reporters = models.ManyToManyField(CustomUser, related_name='editing_projects', blank=True)
-    only_viewers = models.ManyToManyField(CustomUser, related_name='view_only', blank=True)
+    only_viewers = models.ManyToManyField(CustomUser, related_name='view_only_projects', blank=True)
     # Shares same collection freq with project years that are related to it
     collection_freq = models.ForeignKey(CollectionFrequency, on_delete=models.SET_NULL,
     null=True, related_name='projects', blank=True)

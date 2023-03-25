@@ -1,9 +1,23 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm
+from django import forms
 from django.forms import inlineformset_factory
 from django.forms import BaseInlineFormSet
 from .models import CollectionFrequency, CustomUser, Pdo, Project, SubPDO, ProjectYear, Entry, YearlyTarget
 from django.db.models import Q
 
+
+class CustomUserChangeForm(UserChangeForm):    
+
+    class Meta(UserChangeForm.Meta):
+        model = CustomUser
+        exclude = None
+
+
+class CustomUserAdmin(UserAdmin):
+    form = UserChangeForm
+    
 
 class DeletableModelInlineFormset(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
@@ -92,7 +106,7 @@ class ProjectAdmin(admin.ModelAdmin):
         obj.project_years.set(project_years)
 
 
-admin.site.register(CustomUser)
+admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(CollectionFrequency)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Pdo, PDOAdmin)

@@ -1,3 +1,20 @@
+.profile-container {
+    border-top: solid 10px aliceblue;
+    max-height: fit-content;
+}
+
+.profile-projects-container{
+    max-height: 85vh;
+    overflow: scroll;
+}
+
+.grouped-projects-header {
+    background-color: black;
+    border-radius: 10px;
+    color: aliceblue;
+    width: fit-content;    
+}
+
 .custom-bg-image {
     background-position: center;
     background-size: cover;
@@ -26,10 +43,12 @@ a {
 .project-card {
     border-radius: 40px;
     background-color: rgb(242, 243, 243);
+    border: 3px solid rgb(242, 243, 243);
 }
 
 .project-card:hover {
-    border: 1px solid whitesmoke;    
+    background-color: rgb(219, 232, 244);
+    border-color: rgb(243, 249, 255);
 }
 
 .project-card-footer {

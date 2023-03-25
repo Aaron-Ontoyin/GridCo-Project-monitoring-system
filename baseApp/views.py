@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic.list import ListView
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,7 +13,8 @@ from django.contrib import messages
 
 from django.db.models import Q
 
-from .models import Project, Entry, SubPDO
+
+from .models import CustomUser, Project, Entry, SubPDO
 
 
 class IndexView(LoginRequiredMixin, ListView):
@@ -22,12 +24,16 @@ class IndexView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
         q = self.request.GET.get('searched_project')
-        projects = Project.objects.filter(
-            Q(only_viewers__in=[self.request.user]) |
-            Q(reporters__in=[self.request.user]) |
-            Q(creator=self.request.user)
-        )
+        if user.is_staff:
+            projects = Project.objects.all()
+        else:
+            projects = Project.objects.filter(
+                Q(only_viewers__in=[user]) |
+                Q(reporters__in=[user]) |
+                Q(creator=user)
+            )
 
         if q is not None:
             projects = projects.filter(
@@ -57,9 +63,10 @@ class LoginView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request, request.POST)        
-        
+        form = self.form_class(request, request.POST)
+
         if form.is_valid():
+            # No Need to do authenticaton. Just login???????????
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
@@ -70,10 +77,17 @@ class LoginView(View):
                 return redirect(self.success_url)
             else:
                 messages.error(request, "Incorrect Username or password")
-        else:
-            print(form.errors)
-            
-        return render(request, self.template_name, {'form': form, 'messages': messages})
+        else:            
+            print(form.non_field_errors)
+            print(form.data)
+
+        return render(request, self.template_name, {'form': form})
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    model = CustomUser
+    template_name = 'baseApp/profile.html'
+    context_object_name = 'user'
 
 
 def logoutView(request):
@@ -91,7 +105,7 @@ class ProjectView(LoginRequiredMixin, DetailView):
         self.object = project
         user = request.user
         allowed_viewers = project.reporters.all() | project.only_viewers.all()
-        if project.creator == user or user in allowed_viewers:
+        if project.creator == user or user in allowed_viewers or user.is_staff:
             context = self.get_context_data(**kwargs)
             return self.render_to_response(context)
         else:

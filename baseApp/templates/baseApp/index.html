@@ -1,7 +1,7 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
-<section class="custom-bg-image vh-100" style="background-image: url({% static '/images/elec2.jpg' %});">
+<section class="custom-bg-image" style="background-image: url({% static '/images/elec2.jpg' %});">
     <div class="search-btn input-group">
         <!-- Search Bar -->
         <form action="{% url 'index' %}" method="GET">
@@ -16,35 +16,7 @@
     <div class="projects-container shadow mt-3 m-2 pt-lg-1 p-lg-5 p-3">
         {% for project in projects %}
         <a href="{% url 'project' project.id %}">
-        <div class="project-card rounded p-2 my-4">
-            <div class="d-flex justify-content-between mb-1">
-                <div class="flex-row">
-                    <h3 style="font-family:'Times New Roman', Times, serif ;" >Project Title: {{project.name}}</h3>
-                </div>
-                <div class="flex-row">
-                    <span> {{project.perc_completed}}% completed</span>
-                </div>
-            </div>
-
-            <div class="d-flex my-lg-4">
-                <div class="flex-row">
-                    <h6>PDO:</h6>
-                </div>
-                <div class="pdo shadow-sm rounded p-1 flex-row ml-3">
-                    <p>{{project.genPDO}}</p>
-                </div>                
-            </div>
-
-            <div class="project-card-footer d-flex justify-content-between mx-l-3">
-                <div class="flex-row">
-                    <span> Created By: {{project.creator}}</span>
-                </div>
-                <div class="flex-row">
-                    <span>  Date Created: {{project.created}}</span>
-                </div>
-            </div>
-
-        </div>
+        {% include 'baseApp/project_card.html' %}
         </a>
         {% empty %}
             <h2>No projects for you yet</h2>
