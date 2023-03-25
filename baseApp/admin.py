@@ -51,11 +51,28 @@ PDOFormset = inlineformset_factory(Project, Pdo, fields=["name", "pdo_num"],
 formset=DeletableModelInlineFormset, can_delete=True
 )
 
+class YearlyTargetInline(admin.TabularInline):
+    model = YearlyTarget
+    
+    # def has_add_permission(self, request, obj):
+    #     return False
+
+    def get_extra(self, request, obj=None, **kwargs):
+        extra = super().get_extra(request, obj, **kwargs)        
+        if obj:
+            # Get the number of forms that are already associated with the parent object.
+            existing_forms = self.get_queryset(request).filter(subpdo=obj).count()
+            # Calculate the number of extra forms needed to reach the desired total.            
+            extra = obj.pdo.project.duration - existing_forms            
+        return extra
+
+
 class SubPDOInline(admin.TabularInline):
     exclude = ["subpdo_id", "detailed_data_src", "comments"]
     model = SubPDO
     formset = SubPDOFormSet
     extra = 0
+
 
 class PDOInline(admin.TabularInline):
     model = Pdo
@@ -67,6 +84,9 @@ class PDOInline(admin.TabularInline):
 class PDOAdmin(admin.ModelAdmin):
     inlines = [SubPDOInline]
 
+    def has_add_permission(self, request):
+        return False
+
     # Save subpdos
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
@@ -77,9 +97,16 @@ class PDOAdmin(admin.ModelAdmin):
         formset.save_m2m()
 
 
+class SubPDOAdmin(admin.ModelAdmin):
+    inlines = [YearlyTargetInline]
+
+    def has_add_permission(self, request):
+        return False
+    
+    
 class ProjectAdmin(admin.ModelAdmin):
     inlines = [PDOInline]
-    exclude = ["creator", "project_years"]
+    exclude = ["creator", "project_years", "collection_freq"]
 
     # Save indicators
     def save_formset(self, request, form, formset, change):
@@ -102,14 +129,23 @@ class ProjectAdmin(admin.ModelAdmin):
         collection_freq = obj.collection_freq
         project_years = ProjectYear.objects.filter(
             Q(year_num__in=year_num_list) & Q(collection_freq=collection_freq)
-            )        
+            )
         obj.project_years.set(project_years)
 
 
+class CollectionFrequencyAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # creat project 100 years
+        for i in range(1, 101):
+            ProjectYear.objects.create(year_num=i, collection_freq=obj)
+
+
+admin.site.site_header = "GridCo Project Monitoring System Admin"
+admin.site.site_title = "GridCo Project Monitoring System Admin"
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(CollectionFrequency)
+admin.site.register(CollectionFrequency, CollectionFrequencyAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Pdo, PDOAdmin)
-admin.site.register(SubPDO)
-admin.site.register(Entry)
-admin.site.register(YearlyTarget)
+admin.site.register(SubPDO, SubPDOAdmin)

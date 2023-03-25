@@ -53,7 +53,7 @@ class ProjectYear(models.Model):
     year_num = models.IntegerField()
     # Shares same collection freq with projects that are related to it
     collection_freq = models.ForeignKey(CollectionFrequency,
-    on_delete=models.SET_NULL, related_name='project_year', blank=True, null=True)
+    on_delete=models.CASCADE, related_name='project_year', blank=True, null=True)
 
     def __str__(self):
         return f"Project year {self.year_num} :{self.collection_freq.name}"
@@ -80,7 +80,7 @@ class Project(models.Model):
 
     def perc_completed(self):
         subpdos = SubPDO.objects.filter(pdo__project=self)
-        compls  = [i.get_perc_comp() for i in subpdos]        
+        compls  = [i.get_perc_comp() for i in subpdos]
         try:
             perc_complete = sum(compls) / len(compls)
         except ZeroDivisionError:
@@ -179,7 +179,7 @@ class Pdo(models.Model):
             )
         ]
         verbose_name_plural = "Indicators"
-
+        verbose_name = "Indicator"
 
 class Entry(models.Model):
     value = models.DecimalField(max_digits=9, decimal_places=1, default=0, null=True, blank=True)
@@ -211,11 +211,11 @@ class Entry(models.Model):
 
 class YearlyTarget(models.Model):
     subpdo = models.ForeignKey('SubPDO', on_delete=models.CASCADE, related_name='targets')
-    yrly_target_index = models.PositiveIntegerField()
+    year = models.PositiveIntegerField()
     value = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.subpdo} Target for yr {self.yrly_target_index}"
+        return f"{self.subpdo} Target for yr {self.year}"
 
 
 class SubPDO(models.Model):
@@ -257,9 +257,10 @@ class SubPDO(models.Model):
         
         atd = 0
         if self.classification == "Cummulative":
-            last_year_entries = entries_in_bages_with_targets[-1]
-            last_entry = last_year_entries.last()
-            atd = last_entry.value        
+            if len(entries_in_bages_with_targets) > 0:                
+                last_year_entries = entries_in_bages_with_targets[-1]
+                last_entry = last_year_entries.last()
+                atd = last_entry.value
         else: # It's percentage or number
             for i in entries_in_bages_with_targets:
                 for entry in i:
@@ -302,7 +303,7 @@ class SubPDO(models.Model):
                 
                 # If we've created all entries for a year, then create a yearly target
                 if i % project.project_years.first().collection_freq.num_entries == 0:
-                    YearlyTarget.objects.create(subpdo=self, yrly_target_index=yrly_target_index)
+                    YearlyTarget.objects.create(subpdo=self, year=yrly_target_index)
                     yrly_target_index += 1
         else:
             super().save(*args, **kwargs)
@@ -328,7 +329,7 @@ class SubPDO(models.Model):
         entries_in_year_bages = list(entries_in_year_bages) # change to a list
         
         # Create a new entries_in_year_bages that has targets
-        entries_in_year_bages_with_targets = []
+        entries_in_year_bages_with_targets = []        
         for i, target in enumerate(self.targets.all()):
             if i < len(entries_in_year_bages):
                 entries_bage = entries_in_year_bages[i]
@@ -399,7 +400,9 @@ class SubPDO(models.Model):
         return self.get_entries_in_bages_with_targets_atd_and_pc()
 
     def __str__(self):
-        return f"{self.subpdo_id}"
+        return f"{self.pdo} - {self.subpdo_id}"
 
     class Meta:
+        ordering = ['pdo']
+        verbose_name = "Project Development objective"
         verbose_name_plural = "Project Development objectives"

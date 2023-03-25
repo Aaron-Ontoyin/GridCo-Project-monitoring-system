@@ -23,7 +23,7 @@
     </div>
 
     <div class="profile-projects-container col-md-7 mx-lg-5">
-        <h3 class="grouped-projects-header text-center mb-3 p-2">Projects Associated with {{user.first_name}} {{user.last_name}}</h3>
+        <h3 class="grouped-projects-main-header text-center mb-3 p-2">Projects Associated with {{user.first_name}} {{user.last_name}}</h3>
         <div class="bg-light shadow rounded p-2">
             <div id="accordion">
                 {% if user.is_staff or user.is_superuser %}        
@@ -31,13 +31,13 @@
                 <div class="card-header" id="headingOne">
                     <h5 class="mb-0">
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Projects Created
+                        Projects Created [{{user.created_projects.count}}]
                     </button>
                     </h5>
                 </div>
                 <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
-                        <div class="">
+                        <div class="grouped-projects">
                             {% for project in user.created_projects.all %}
                             <div class="projecs">
                                 {% include 'baseApp/project_card.html' %}
@@ -54,7 +54,7 @@
                 <div class="card-header" id="headingTwo">
                     <h5 class="mb-0">
                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        Projects Assigned to Update
+                        Projects Assigned to Update [{{user.editing_projects.count}}]
                     </button>
                     </h5>
                 </div>
@@ -76,7 +76,7 @@
                 <div class="card-header" id="headingThree">
                     <h5 class="mb-0">
                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        Projects Allowed to View Only
+                        Projects Allowed to View Only [{{user.view_only_projects.count}}]
                     </button>
                     </h5>
                 </div>

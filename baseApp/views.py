@@ -73,10 +73,11 @@ class LoginView(View):
             # No Need to do authenticaton. Just login???????????
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+            remember_me = form.cleaned_data.get('remember_me', False)
             user = authenticate(username=username, password=password)
 
             if user is not None:
-                login(request, user)
+                login(request, user, remember=remember_me)
                 messages.info(request, f"Welcome {request.user.username}")
                 return redirect(self.success_url)
             else:
