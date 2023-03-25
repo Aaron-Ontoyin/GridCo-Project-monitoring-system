@@ -112,8 +112,12 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'aarononto909@gmail.com'
-EMAIL_HOST_PASSWORD = 'mySTRONGpassword12'
+EMAIL_HOST_PASSWORD = '123'
 
+AUTHENTICATION_BACKENDS = [
+    'baseApp.custom_backend.CustomBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

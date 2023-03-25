@@ -6,10 +6,14 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.forms import AuthenticationForm
+from .forms import CustomAuthenticationForm
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
+
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView
+from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
 
 from django.db.models import Q
 
@@ -51,7 +55,7 @@ class IndexView(LoginRequiredMixin, ListView):
 
 class LoginView(View):
     template_name='baseApp/login.html'
-    form_class = AuthenticationForm
+    form_class = CustomAuthenticationForm
     success_url = reverse_lazy('index')
 
     def get(self, request, *args, **kwargs):
@@ -135,3 +139,32 @@ class ProjectView(LoginRequiredMixin, DetailView):
             subpdo.save()
 
         return redirect('project', pk=self.get_object().pk)
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = "baseApp/passwords/password_change_form.html"
+
+
+class CustomPasswordChangeDoneView(PasswordChangeDoneView):
+    template_name = "baseApp/passwords/password_change_done_form.html"
+
+
+class CustomPasswordResetView(PasswordResetView):
+    email_template_name = "baseApp/passwords/password_reset_email.html"    
+    subject_template_name = "baseApp/passwords/password_reset_subject.txt"
+    template_name = "baseApp/passwords/password_reset_form.html"
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = "baseApp/passwords/password_reset_done.html"
+    
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = "registration/password_reset_confirm.html"
+
+
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = "baseApp/passwords/password_reset_complete.html"    
+
