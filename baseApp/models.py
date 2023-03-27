@@ -212,7 +212,7 @@ class Entry(models.Model):
 class YearlyTarget(models.Model):
     subpdo = models.ForeignKey('SubPDO', on_delete=models.CASCADE, related_name='targets')
     year = models.PositiveIntegerField()
-    value = models.PositiveIntegerField(null=True, blank=True)
+    value = models.PositiveIntegerField(blank=True, default=0)
 
     def __str__(self):
         return f"{self.subpdo} Target for yr {self.year}"
@@ -245,7 +245,10 @@ class SubPDO(models.Model):
     detailed_data_src = models.CharField(max_length=1000, null=True, blank=True)
     comments = models.CharField(max_length=1000, null=True, blank=True)
     subpdo_id = models.CharField(max_length=25, null=True, blank=True)
-    
+
+    def get_num_entries(self):
+        return self.pdo.project.duration * self.pdo.project.collection_freq.num_entries
+
     def get_end_target(self):
         """ Returns end_taget as a string. Adds 0 in front incase it's below 10 """
         t = self.end_target
@@ -260,7 +263,7 @@ class SubPDO(models.Model):
             if len(entries_in_bages_with_targets) > 0:                
                 last_year_entries = entries_in_bages_with_targets[-1]
                 last_entry = last_year_entries.last()
-                atd = last_entry.value
+                atd = last_entry.value                
         else: # It's percentage or number
             for i in entries_in_bages_with_targets:
                 for entry in i:
@@ -382,9 +385,13 @@ class SubPDO(models.Model):
             else: # Percentage and number works the same
                 for entry in i[:-2]:
                     total_entries_val += entry.value
-                                
-            perc_comp = float(total_entries_val) * 100 / target_val
-            perc_comp = round(perc_comp, 1)            
+            
+            try:
+                perc_comp = float(total_entries_val) * 100 / target_val
+                perc_comp = round(perc_comp, 1)
+            except ZeroDivisionError:
+                perc_comp = 0.0
+
             # Add zero infront if num is less than 10
             if perc_comp < 10.0:
                 perc_comp = f"0{perc_comp}"

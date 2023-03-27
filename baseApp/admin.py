@@ -102,7 +102,16 @@ class SubPDOAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
-    
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        
+        obj = form.instance
+        # Create Entries
+        if not obj.entries.all():
+            for i in range(1, obj.get_num_entries()+1):        
+                Entry.objects.create(subpdo=obj, index=i)
+
     
 class ProjectAdmin(admin.ModelAdmin):
     inlines = [PDOInline]
@@ -149,3 +158,4 @@ admin.site.register(CollectionFrequency, CollectionFrequencyAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Pdo, PDOAdmin)
 admin.site.register(SubPDO, SubPDOAdmin)
+admin.site.register(Entry)
