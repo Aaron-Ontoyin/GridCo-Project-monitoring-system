@@ -17,7 +17,7 @@ class CustomUserChangeForm(UserChangeForm):
 
 class CustomUserAdmin(UserAdmin):
     form = UserChangeForm
-    
+
 
 class DeletableModelInlineFormset(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):

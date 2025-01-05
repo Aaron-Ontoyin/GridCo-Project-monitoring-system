@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.shortcuts import render
 from django.db.models import Count
 
-import pandas as pd
-
 from datetime import date, timedelta
 from itertools import zip_longest
 

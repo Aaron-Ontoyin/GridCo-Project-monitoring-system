@@ -10,10 +10,12 @@ from .forms import CustomAuthenticationForm
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.conf import settings
 
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView
 from django.contrib.auth.views import PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
+from django.http import HttpResponse
 
 from django.db.models import Q
 
@@ -77,8 +79,15 @@ class LoginView(View):
             user = authenticate(username=username, password=password)
 
             if user is not None:
-                login(request, user, remember=remember_me)
+                login(request, user)
                 messages.info(request, f"Welcome {request.user.username}")
+                if remember_me:
+                    request.session.set_expiry(settings.SESSION_COOKIE_AGE_REMEMBER_ME)
+                    response = HttpResponse()
+                    response.set_cookie(settings.SESSION_COOKIE_NAME, request.session.session_key, max_age=settings.SESSION_COOKIE_AGE_REMEMBER_ME)
+                    return response
+                else:
+                    request.session.set_expiry(settings.SESSION_COOKIE_AGE)
                 return redirect(self.success_url)
             else:
                 messages.error(request, "Incorrect Username or password")
@@ -148,7 +157,7 @@ class CustomPasswordChangeView(PasswordChangeView):
 
 class CustomPasswordChangeDoneView(PasswordChangeDoneView):
     template_name = "baseApp/passwords/password_change_done_form.html"
-
+;
 
 class CustomPasswordResetView(PasswordResetView):
     email_template_name = "baseApp/passwords/password_reset_email.html"    
